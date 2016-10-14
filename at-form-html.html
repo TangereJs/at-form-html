@@ -8,21 +8,231 @@
 
 <dom-module id="at-form-html">
   <template>
+    <style include="at-form-common"></style>
     <style>
+      :host * {
+        box-sizing: border-box;
+      }
+
+      :host {
+        @apply(--at-form-host);
+      }
+
+      #hint {
+        min-height: 14px;
+        margin-bottom: 8px;
+      }
     </style>
+    <div id="atContainer" class="at-container">
+      <iron-label id="label" for="polymerQuill">{{label}}</iron-label>
+      <div id="contentContainer" class="at-content-container">
+        <polymer-quill id="polymerQuill" store-as="html"></polymer-quill>
+      </div>
+      <div id="hint"></div>
+    </div>
   </template>
   <script>
     'use strict';
     Polymer({
       is: 'at-form-html',
-      behaviors: [Tangere.behaviors.i18n, Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormHtmlInputValidation ],
-
+      behaviors: [Tangere.behaviors.i18n, Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormHtmlInputValidation],
       properties: {
+        /**
+         * Element's label for element display purposes
+         * @property label
+         * @type String
+         * @default ''
+         */
+        label: {
+          type: String,
+          value: '',
+          title: 'Label'
+        },
 
+        /**
+         * Hides element's label
+         * @property hideLabel
+         * @type Boolean
+         * @default false
+         */
+        hideLabel: {
+          type: Boolean,
+          value: false,
+          observer: '_hideLabelChanged',
+          title: 'Do not show the label'
+        },
+
+        /**
+         * Element's disabled state
+         * @property disabled
+         * @type Boolean
+         * @default false
+         */
+        disabled: {
+          type: Boolean,
+          value: false,
+          observer: '_disabledChanged',
+          title: 'Field value can not be changed'
+        },
+
+        /**
+        * Hides the element. When hidden nothing is displayed for the element
+        * @property hide
+        * @type Boolean
+        * @default false
+        */
+        hide: {
+          type: Boolean,
+          value: false,
+          observer: '_hideChanged',
+          title: 'Field is invisible'
+        },
+
+        /**
+         * Element's required state for element validation purposes
+         * @property required
+         * @type Boolean
+         * @default false
+         */
+        required: {
+          type: Boolean,
+          value: false,
+          title: 'Input required'
+        },
+
+        /**
+         * Maximum number of characters across all lines allowed on the element. Use 0 (zero) for no limit
+         * @property maxLines
+         * @type Number
+         * @default 0
+         */
+        maxChars: {
+          type: Number,
+          value: 0,
+          title: 'Maximum number of characters'
+        },
+
+        /**
+         * Elements value
+         * @property value
+         * @type String
+         * @default ''
+         */
+        value: {
+          type: String,
+          value: '',
+          observer: '_valueChanged',
+          xtype: "textarea",
+          title: 'Value'
+        },
       },
 
-      ready: function () {
+      observers: [
+        '_internalValidStateUpdate(required, maxChars)'
+      ],
 
+      $meta: [{
+        title: "Html",
+        type: "string",
+        xtype: "html"
+      }],
+
+      _hideLabelChanged: function(newValue, oldValue) {
+        this.toggleClass("hidden", newValue, this.$.label);
+      },
+
+      ready: function() {
+
+        var self = this;
+        var polymerQuill = this.$.polymerQuill;
+        polymerQuill.addEventListener('change', function(event) {
+          event.stopPropagation();
+          self.validate();
+        });
+
+        this._isReady = true;
+        this._valueChanged(this.value, "called from ready");
+        this._internalValidStateUpdate(this.required, this.maxChars);
+      },
+
+      _disabledChanged: function(newValue, oldValue) {
+        var label = this.$.label;
+        this.toggleClass('disabled', newValue, label);
+        var contentContainer = this.$.contentContainer;
+        this.toggleClass('disabled', newValue, contentContainer);
+
+        var polymerQuill = this.$.polymerQuill;
+        if (this._isReady) {
+          polymerQuill.toggleEnable();
+        }
+      },
+
+      _hideChanged: function(newValue, oldValue) {
+        var atContainer = this.$.atContainer;
+        this.toggleClass('hidden', newValue, atContainer);
+      },
+
+      _internalValidStateUpdate: function (required, maxChars) {
+        if (this._isReady) {
+          this.validate();
+        }
+      },
+
+      _valueChanged: function(newValue, oldValue) {
+        var valueToSet = newValue === null ? "" : newValue;
+        var polymerQuill = this.$.polymerQuill;
+        polymerQuill.content = valueToSet;
+
+        if (this.autoValidate) { this._validate(true); }
+
+        this._fireValueChangedEvent(this.value);
+      },
+
+      _getFocusableElement: function() {
+        return Polymer.dom(this.$.polymerQuill.$.editor).firstChild;
+      },
+
+      focus: function () {
+        this._getFocusableElement().focus();
+      },
+
+      validate: function (showError) {
+
+        if (showError === undefined) { showError = this.autoValidate; }
+
+        // validate must validate the current value
+        var inputValue = this.$.polymerQuill.content;
+
+        if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
+          this.value = inputValue;
+        }
+
+        return this._validate(showError);
+      },
+
+      _validate: function (showError) {
+        var validationResult = this._validateBaseData();
+        this._handleValidationResult(validationResult);
+        if (!validationResult.isValid) {
+          return validationResult.isValid;
+        }
+
+        validationResult = this._validateData(this, this.value, this.T.bind(this));
+        if (showError) { this._handleValidationResult(validationResult); }
+
+        return validationResult.isValid;
+      },
+
+      _updateUIValidState: function(isValid) {
+        var label = this.$.label;
+        this.toggleClass('error', !isValid, label);
+        var contentContainer = this.$.contentContainer;
+        this.toggleClass('error', !isValid, contentContainer);
+        var atContainer = this.$.atContainer;
+        var codeMirrorCode = atContainer.getElementsByClassName('CodeMirror-lines')[0];
+        this.toggleClass('error', !isValid, codeMirrorCode);
+        var hint = this.$.hint;
+        this.toggleClass('error', !isValid, hint);
       }
     });
   </script>
