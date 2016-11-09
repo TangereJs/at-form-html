@@ -182,11 +182,14 @@
       _valueChanged: function(newValue, oldValue) {
         var valueToSet = newValue === null ? "" : newValue;
         var quillElement = this.$.quillElement;
-        this._ignoreQuillTextChanged = true;
-        quillElement.setText(valueToSet);
-        this._ignoreQuillTextChanged = false;
 
-        if (this.autoValidate) { this._validate(true); }
+        if (!this._isInternalUpdate) {
+          this._ignoreQuillTextChanged = true;
+          quillElement.setText(valueToSet);
+          this._ignoreQuillTextChanged = false;
+
+          if (this.autoValidate) { this._validate(true); }
+        }
 
         this._fireValueChangedEvent(this.value);
       },
@@ -207,7 +210,9 @@
         var inputValue = this.$.quillElement.getText();
         inputValue = inputValue.trim();
         if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
+          this._isInternalUpdate = true;
           this.value = inputValue;
+          this._isInternalUpdate = false;
         }
 
         return this._validate(showError);
