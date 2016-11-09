@@ -119,10 +119,13 @@
          * @default ''
          */
         value: {
-          type: String,
-          value: '',
+          type: Object,
+          xtype: 'json',
+          mode: 'json',
+          value: function () {
+            return {};
+          },
           observer: '_valueChanged',
-          xtype: "textarea",
           title: 'Value'
         },
       },
@@ -185,7 +188,9 @@
 
         if (!this._isInternalUpdate) {
           this._ignoreQuillTextChanged = true;
-          quillElement.setText(valueToSet);
+          try {
+            quillElement.setContents(JSON.parse(valueToSet));
+          } catch (e) {}
           this._ignoreQuillTextChanged = false;
 
           if (this.autoValidate) { this._validate(true); }
@@ -207,8 +212,7 @@
         if (showError === undefined) { showError = this.autoValidate; }
 
         // validate must validate the current value
-        var inputValue = this.$.quillElement.getText();
-        inputValue = inputValue.trim();
+        var inputValue = JSON.stringify(this.$.quillElement.getContents(), null, " ");
         if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
           this._isInternalUpdate = true;
           this.value = inputValue;
