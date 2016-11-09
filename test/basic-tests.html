@@ -131,13 +131,13 @@
 
   <test-fixture id="maxChars0ValueLoremIpsum">
     <template>
-      <at-form-html value="lorem ipsum"></at-form-html>
+      <at-form-html value='{ "ops": [  {   "insert": "lorem ipsum"  } ]}'></at-form-html>
     </template>
   </test-fixture>
 
   <test-fixture id="maxChars10ValueLoremIpsum">
     <template>
-      <at-form-html max-chars="10" value="lorem ipsum"></at-form-html>
+      <at-form-html max-chars="10" value='{ "ops": [  {   "insert": "lorem ipsum"  } ]}'></at-form-html>
     </template>
   </test-fixture>
 
@@ -321,7 +321,7 @@
         test('max chars 0, value empty string', function () {
           var element = fixture('maxChars0EmptyValue');
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, "", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -330,7 +330,7 @@
         test('max chars 10, value empty string', function () {
           var element = fixture('maxChars10EmptyValue');
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, "", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -339,7 +339,7 @@
         test('max chars 0, value lorem ipsum', function () {
           var element = fixture('maxChars0ValueLoremIpsum');
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -348,7 +348,7 @@
         test('max chars 10, value lorem ipsum', function () {
           var element = fixture('maxChars10ValueLoremIpsum');
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, false, "element is valid");
@@ -541,9 +541,9 @@
         test('max chars 0, value empty string', function () {
           var element = fixture('propertyTest');
           element.maxChars = 0;
-          element.value = "";
+          element.value = '{"ops":[{"insert":"\\n"}]}';
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, "", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -552,9 +552,9 @@
         test('max chars 10, value empty string', function () {
           var element = fixture('propertyTest');
           element.maxChars = 10;
-          element.value = "";
+          element.value = '{"ops":[{"insert":"\\n"}]}';
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, "", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -563,9 +563,9 @@
         test('max chars 0, value lorem ipsum', function () {
           var element = fixture('propertyTest');
           element.maxChars = 0;
-          element.value = "lorem ipsum";
+          element.value = '{"ops":[{"insert":"lorem ipsum\\n"}]}';
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -574,9 +574,9 @@
         test('max chars 10, value lorem ipsum', function () {
           var element = fixture('propertyTest');
           element.maxChars = 10;
-          element.value = "lorem ipsum";
+          element.value = '{"ops":[{"insert":"lorem ipsum\\n"}]}';
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, false, "element is valid");

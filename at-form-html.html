@@ -119,7 +119,7 @@
          * @default ''
          */
         value: {
-          type: Object,
+          type: String,
           xtype: 'json',
           mode: 'json',
           value: function () {
@@ -189,8 +189,11 @@
         if (!this._isInternalUpdate) {
           this._ignoreQuillTextChanged = true;
           try {
-            quillElement.setContents(JSON.parse(valueToSet));
-          } catch (e) {}
+            var parsedValue = JSON.parse(valueToSet);
+            quillElement.setContents(parsedValue);
+          } catch (e) {
+            console.log(e);
+          }
           this._ignoreQuillTextChanged = false;
 
           if (this.autoValidate) { this._validate(true); }
@@ -212,7 +215,8 @@
         if (showError === undefined) { showError = this.autoValidate; }
 
         // validate must validate the current value
-        var inputValue = JSON.stringify(this.$.quillElement.getContents(), null, " ");
+        var quillDelta = this.$.quillElement.getContents();
+        var inputValue = JSON.stringify(quillDelta);
         if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
           this._isInternalUpdate = true;
           this.value = inputValue;
@@ -230,6 +234,23 @@
         }
 
         validationResult = this._validateData(this, this.value, this.T.bind(this));
+        if (showError) { this._handleValidationResult(validationResult); }
+
+        var quillElement = this.$.quillElement;
+
+        validationResult.isValid = !this.required || quillElement.getLength() > 1;
+        if (!validationResult.isValid) {
+          validationResult.errorMessage = this.T("This field is required");
+        }
+        if (showError) { this._handleValidationResult(validationResult); }
+
+        var maxChars = parseInt(this.maxChars);
+        if (maxChars > 0) {
+          validationResult.isValid = this.maxChars > quillElement.getLength();
+          if (!validationResult.isValid) {
+            validationResult.errorMessage = this.T("You can not enter more than {0} characters.", maxChars);
+          }
+        }
         if (showError) { this._handleValidationResult(validationResult); }
 
         return validationResult.isValid;
