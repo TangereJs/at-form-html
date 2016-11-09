@@ -391,9 +391,9 @@
           eventCount += 1;
         });
 
-        var inputElement = input.$.polymerQuill;
+        var inputElement = input.$.quillElement;
 
-        inputElement.content = "";
+        inputElement.setText("");
         TestHelpers.fireEvent('change', {}, inputElement);
 
         flush(function() {
@@ -418,12 +418,12 @@
           eventCount += 1;
         });
 
-        var inputElement = input.$.polymerQuill;
+        var inputElement = input.$.quillElement;
 
-        inputElement.content = "lorem ipsum";
+        inputElement.setText("lorem ipsum");
 
         flush(function() {
-          assert.equal(eventCount, 0, "event count is not correct");
+          assert.equal(eventCount, 1, "event count is not correct");
           done();
         });
       });

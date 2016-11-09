@@ -146,6 +146,7 @@
         var self = this;
         var quillElement = this.$.quillElement;
         quillElement.addEventListener('text-change', function(event) {
+          if (self._ignoreQuillTextChanged) { return; }
           event.stopPropagation();
           self.validate();
         });
@@ -181,7 +182,9 @@
       _valueChanged: function(newValue, oldValue) {
         var valueToSet = newValue === null ? "" : newValue;
         var quillElement = this.$.quillElement;
+        this._ignoreQuillTextChanged = true;
         quillElement.setText(valueToSet);
+        this._ignoreQuillTextChanged = false;
 
         if (this.autoValidate) { this._validate(true); }
 
