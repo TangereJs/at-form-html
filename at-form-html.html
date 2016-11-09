@@ -4,7 +4,7 @@
 <link rel="import" href="at-form-html-input-validation.html">
 <link rel="import" href="../iron-label/iron-label.html">
 <link rel="import" href="../at-theme/at-theme.html">
-<link rel="import" href="../polymer-quill/polymer-quill.html">
+<link rel="import" href="../quill-element/quill-element.html">
 
 <dom-module id="at-form-html">
   <template>
@@ -24,9 +24,9 @@
       }
     </style>
     <div id="atContainer" class="at-container">
-      <iron-label id="label" for="polymerQuill">{{label}}</iron-label>
+      <iron-label id="label" for="quillElement">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
-        <polymer-quill id="polymerQuill" store-as="html"></polymer-quill>
+        <quill-element id="quillElement"></quill-element>
       </div>
       <div id="hint"></div>
     </div>
@@ -144,8 +144,8 @@
       ready: function() {
 
         var self = this;
-        var polymerQuill = this.$.polymerQuill;
-        polymerQuill.addEventListener('change', function(event) {
+        var quillElement = this.$.quillElement;
+        quillElement.addEventListener('text-change', function(event) {
           event.stopPropagation();
           self.validate();
         });
@@ -161,9 +161,9 @@
         var contentContainer = this.$.contentContainer;
         this.toggleClass('disabled', newValue, contentContainer);
 
-        var polymerQuill = this.$.polymerQuill;
+        var quillElement = this.$.quillElement;
         if (this._isReady) {
-          polymerQuill.toggleEnable();
+          quillElement.disable(newValue);
         }
       },
 
@@ -180,8 +180,8 @@
 
       _valueChanged: function(newValue, oldValue) {
         var valueToSet = newValue === null ? "" : newValue;
-        var polymerQuill = this.$.polymerQuill;
-        polymerQuill.content = valueToSet;
+        var quillElement = this.$.quillElement;
+        quillElement.setText(valueToSet);
 
         if (this.autoValidate) { this._validate(true); }
 
@@ -189,7 +189,7 @@
       },
 
       _getFocusableElement: function() {
-        return Polymer.dom(this.$.polymerQuill.$.editor).firstChild;
+        return this.$.quillElement;
       },
 
       focus: function () {
@@ -201,8 +201,8 @@
         if (showError === undefined) { showError = this.autoValidate; }
 
         // validate must validate the current value
-        var inputValue = this.$.polymerQuill.content;
-
+        var inputValue = this.$.quillElement.getText();
+        inputValue = inputValue.trim();
         if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
           this.value = inputValue;
         }
