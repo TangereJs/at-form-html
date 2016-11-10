@@ -155,7 +155,6 @@
         });
 
         this._isReady = true;
-        this._valueChanged(this.value, "called from ready");
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
@@ -183,7 +182,7 @@
       },
 
       _valueChanged: function(newValue, oldValue) {
-        var valueToSet = newValue === null ? "" : newValue;
+        var valueToSet = [null, "null"].indexOf(newValue) !== -1 ? "" : newValue;
         var quillElement = this.$.quillElement;
 
         if (!this._isInternalUpdate) {
@@ -217,7 +216,8 @@
         // validate must validate the current value
         var quillDelta = this.$.quillElement.getContents();
         var inputValue = JSON.stringify(quillDelta);
-        if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
+        var quillLength = this.$.quillElement.getLength();
+        if (([null, "null"].indexOf(this.value) === -1 && quillLength > 1) || ([null, "null"].indexOf(this.value) !== -1 && this.value !== inputValue)) {
           this._isInternalUpdate = true;
           this.value = inputValue;
           this._isInternalUpdate = false;
@@ -234,23 +234,6 @@
         }
 
         validationResult = this._validateData(this, this.value, this.T.bind(this));
-        if (showError) { this._handleValidationResult(validationResult); }
-
-        var quillElement = this.$.quillElement;
-
-        validationResult.isValid = !this.required || quillElement.getLength() > 1;
-        if (!validationResult.isValid) {
-          validationResult.errorMessage = this.T("This field is required");
-        }
-        if (showError) { this._handleValidationResult(validationResult); }
-
-        var maxChars = parseInt(this.maxChars);
-        if (maxChars > 0) {
-          validationResult.isValid = this.maxChars > quillElement.getLength();
-          if (!validationResult.isValid) {
-            validationResult.errorMessage = this.T("You can not enter more than {0} characters.", maxChars);
-          }
-        }
         if (showError) { this._handleValidationResult(validationResult); }
 
         return validationResult.isValid;

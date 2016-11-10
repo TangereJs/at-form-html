@@ -27,6 +27,10 @@
         return Object.prototype.toString.call(obj) === "[object Number]";
       }
 
+      function isArray(obj) {
+        return Object.prototype.toString.call(obj) === "[object Array]";
+      }
+
       function isHTMLElement(obj) {
         return Object.prototype.toString.call(obj) === "[object HTMLElement]";
       }
@@ -176,11 +180,14 @@
         override in at-form-file and at-from-image as is already implemented (see at-form-file Line 356 and at-form-image Line 450)
       */
       function _validateRequired(required, value, localizer) {
-        var validationResult = {};
+        var validationResult = {
+          isValid: true,
+          errorMessage: ""
+        };
         var required_ = Boolean(required);
 
         // if required is true return true if value is not undefined, null or ""
-        validationResult.isValid = !required_ || ([undefined, null, ""].indexOf(value) === -1);
+        validationResult.isValid = !required_ || getQuillDeltaLength(value) > 1;
         if (!validationResult.isValid) {
           validationResult.errorMessage = localizer("This field is required.");
         }
@@ -197,7 +204,7 @@
         try {
           var maxChars = parseInt(maxChars);
           if (maxChars > 0) {
-            var charCount = value.length;
+            var charCount = getQuillDeltaLength(value);
             validationResult.isValid = (maxChars + 1) > charCount;
             if (!validationResult.isValid) {
               validationResult.errorMessage = localizer("You can not enter more than {0} characters.", maxChars);
@@ -209,6 +216,25 @@
 
         return validationResult;
       }
+
+      function getQuillDeltaLength(quillDeltaAsJson) {
+        try {
+          var quillDeltaObj = JSON.parse(quillDeltaAsJson);
+          var ops = quillDeltaObj.ops;
+          if (!ops || !isArray(ops) || !ops.length) { return 1; }
+
+          var totalLength = 0;
+          ops.forEach(function(op, index) {
+            totalLength += op.insert.length;
+          });
+
+          return totalLength;
+        } catch (e) {
+          // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
+          return 1;
+        }
+      }
+
     }
   };
 
