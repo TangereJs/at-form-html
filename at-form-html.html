@@ -122,9 +122,7 @@
           type: String,
           xtype: 'json',
           mode: 'json',
-          value: function () {
-            return {};
-          },
+          value: "",
           observer: '_valueChanged',
           title: 'Value'
         },
@@ -155,6 +153,7 @@
         });
 
         this._isReady = true;
+        this._valueChanged(this.value, "called from ready");
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
@@ -182,6 +181,8 @@
       },
 
       _valueChanged: function(newValue, oldValue) {
+        if (!this._isReady) { return; }
+
         var valueToSet = [null, "null"].indexOf(newValue) !== -1 ? "" : newValue;
         var quillElement = this.$.quillElement;
 
@@ -216,11 +217,21 @@
         // validate must validate the current value
         var quillDelta = this.$.quillElement.getContents();
         var inputValue = JSON.stringify(quillDelta);
-        var quillLength = this.$.quillElement.getLength();
-        if (([null, "null"].indexOf(this.value) === -1 && quillLength > 1) || ([null, "null"].indexOf(this.value) !== -1 && this.value !== inputValue)) {
+        var quillLength = this._getQuillDeltaLength(inputValue);
+
+        if ([null, "null"].indexOf(this.value) !== -1 && quillLength > 1 )  {
+          // if value is set to null but quill input is not empty set value to input value
           this._isInternalUpdate = true;
           this.value = inputValue;
           this._isInternalUpdate = false;
+        } else if ([null, "null"].indexOf(this.value) === -1) {
+          // if value is not null
+          var valueQuillLength = this._getQuillDeltaLength(this.value);
+          if (valueQuillLength !== quillLength || (valueQuillLength > 1 && this.value !== inputValue)) {
+            this._isInternalUpdate = true;
+            this.value = inputValue;
+            this._isInternalUpdate = false;
+          }
         }
 
         return this._validate(showError);
@@ -249,7 +260,30 @@
         this.toggleClass('error', !isValid, codeMirrorCode);
         var hint = this.$.hint;
         this.toggleClass('error', !isValid, hint);
+      },
+
+      _getQuillDeltaLength: function(quillDeltaAsJson) {
+        function isArray(obj) {
+          return Object.prototype.toString.call(obj) === "[object Array]";
+        }
+
+        try {
+          var quillDeltaObj = JSON.parse(quillDeltaAsJson);
+          var ops = quillDeltaObj.ops;
+          if (!ops || !isArray(ops) || !ops.length) { return 1; }
+
+          var totalLength = 0;
+          ops.forEach(function(op, index) {
+            totalLength += (op.insert.trim()).length;
+          });
+
+          return totalLength;
+        } catch (e) {
+          // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
+          return 1;
+        }
       }
+
     });
   </script>
 </dom-module>

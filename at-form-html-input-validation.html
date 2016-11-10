@@ -225,7 +225,7 @@
 
           var totalLength = 0;
           ops.forEach(function(op, index) {
-            totalLength += op.insert.length;
+            totalLength += (op.insert.trim()).length;
           });
 
           return totalLength;

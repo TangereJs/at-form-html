@@ -321,7 +321,7 @@
         test('max chars 0, value empty string', function () {
           var element = fixture('maxChars0EmptyValue');
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
+          assert.equal(element.value, '', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -330,7 +330,7 @@
         test('max chars 10, value empty string', function () {
           var element = fixture('maxChars10EmptyValue');
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, '{"ops":[{"insert":"\\n"}]}', "value not set correctly");
+          assert.equal(element.value, '', "value not set correctly");
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");

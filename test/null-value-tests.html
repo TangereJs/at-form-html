@@ -83,7 +83,7 @@
         });
       });
 
-      test('attribute value set to "null"', function(done) {
+      test('attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValue');
         assert.equal(input.value, "null", 'value not set correctly');
         assert.equal(input.valid, true, 'value not set correctly');
@@ -107,25 +107,27 @@
         });
       });
 
-      test('attribute value set to null and required', function(done) {
+      test('required and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndRequired');
         assert.equal(input.value, "null", 'value not set correctly');
         assert.equal(input.required, true, 'required is not set correctly');
-        assert.equal(input.valid, true, 'element is not invalid');
+        assert.equal(input.valid, false, 'element is not valid');
 
+        var quillString = '{"ops":[{"insert":"lorem ipsum"}]}';
+        var quillStringVal = '{"ops":[{"insert":"lorem ipsum"}]}';
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, quillStringVal, 'event detail value not set correctly');
+          assert.equal(input.value, quillStringVal, 'event detail value not set correctly');
           assert.equal(input.required, true, 'required is not set correctly');
           assert.equal(input.valid, true, 'element is not invalid');
           eventCount += 1;
         });
 
-        input.value = 'demo value';
-        Polymer.dom(input).setAttribute('value', 'demo value');
-        input.value = 'demo value';
-        Polymer.dom(input).setAttribute('value', 'demo value');
+        input.value = quillString;
+        Polymer.dom(input).setAttribute('value', quillString);
+        input.value = quillString;
+        Polymer.dom(input).setAttribute('value', quillString);
 
         flush(function() {
           assert.equal(eventCount, 1);
@@ -133,7 +135,7 @@
         });
       });
 
-      test('attribute value set to "null" and required', function(done) {
+      test('required and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndRequired');
         assert.equal(input.value, "null", 'value not set correctly');
         assert.equal(input.required, true, 'required is not set correctly');
@@ -159,7 +161,7 @@
         });
       });
 
-      test('attribute value set to null and maxChars', function(done) {
+      test('maxChars and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndMaxChars');
         assert.equal(input.value, "null", 'value not set correctly');
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
@@ -185,7 +187,7 @@
         });
       });
 
-      test('attribute value set to "null" and maxChars', function(done) {
+      test('maxChars and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndMaxChars');
         assert.equal(input.value, "null", 'value not set correctly');
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
