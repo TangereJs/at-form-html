@@ -4,11 +4,13 @@
 <link rel="import" href="at-form-html-input-validation.html">
 <link rel="import" href="../iron-label/iron-label.html">
 <link rel="import" href="../at-theme/at-theme.html">
-<link rel="import" href="../quill-element/quill-element.html">
+<link rel="import" href="quill-import.html">
 
 <dom-module id="at-form-html">
   <template>
     <style include="at-form-common"></style>
+    <style include="quill-bubble"></style>
+    <style include="quill-snow"></style>
     <style>
       :host * {
         box-sizing: border-box;
@@ -16,6 +18,7 @@
 
       :host {
         @apply(--at-form-host);
+        display: block;
       }
 
       #hint {
@@ -26,7 +29,68 @@
     <div id="atContainer" class="at-container">
       <iron-label id="label" for="quillElement">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
-        <quill-element id="quillElement"></quill-element>
+        <div id="toolbarContainer">
+          <!-- <span class="ql-formats">
+          <select class="ql-font"></select>
+          <select class="ql-size"></select>
+          </span> -->
+          <span class="ql-formats">
+            <select class="ql-header">
+              <option value="1">Header 1</option>
+              <option value="2">Header 2</option>
+              <option value="3">Header 3</option>
+              <option value="4">Header 4</option>
+              <option value="5">Header 5</option>
+              <option value="7">Normal</option>
+            </select>
+            <select class="ql-header">
+              <option value="1">Header 1</option>
+              <option value="2">Header 2</option>
+              <option value="3">Header 3</option>
+              <option value="7">Normal</option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-bold" title="Bold"></button>
+            <button class="ql-italic" title="Italic"></button>
+            <button class="ql-underline" title="Underline"></button>
+            <button class="ql-strike" title="strike" hidden$="{{standardToolbar}}"></button>
+          </span>
+          <span class="ql-formats" hidden$="{{standardToolbar}}">
+            <select class="ql-color" title="Text Color"></select>
+            <select class="ql-background" title="Text Background Color"></select>
+          </span>
+          <!-- <span class="ql-formats">
+          <button class="ql-script" value="sub"></button>
+          <button class="ql-script" value="super"></button>
+          </span> -->
+          <span class="ql-formats" hidden$="{{standardToolbar}}">
+            <button class="ql-header" value="1" title="Header 1"></button>
+            <button class="ql-header" value="2" title="Header 2"></button>
+            <button class="ql-blockquote" title="Blockquote"></button>
+            <button class="ql-code-block" title="Code Clock"></button>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-list" value="ordered" title="Numbered List"></button>
+            <button class="ql-list" value="bullet" title="Bullet List"></button>
+            <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{standardToolbar}}"></button>
+            <button class="ql-indent" value="+1" title="Indent" hidden$="{{standardToolbar}}"></button>
+          </span>
+          <span class="ql-formats" hidden$="{{standardToolbar}}">
+            <!-- <button class="ql-direction" value="rtl"></button> -->
+            <select class="ql-align" title="Align">></select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-link" title="Link"></button>
+            <button class="ql-image" title="Image" hidden$="{{standardToolbar}}"></button>
+            <button class="ql-video" title="Video" hidden$="{{standardToolbar}}"></button>
+            <!-- <button class="ql-formula"></button>> -->
+          </span>
+          <span class="ql-formats">
+            <button class="ql-clean" title="Clear Formating"></button>
+          </span>
+        </div>
+        <div id="editorContainer"></div>
       </div>
       <div id="hint"></div>
     </div>
@@ -121,15 +185,66 @@
         value: {
           type: String,
           xtype: 'json',
-          mode: 'json',
+          mode: 'html',
           value: "",
           observer: '_valueChanged',
           title: 'Value'
         },
+
+        /**
+         * Placeholder when there is no content
+         * @property placeholder
+         * @type String
+         * @default null
+         */
+        placeholder: {
+          type: String,
+          value: null,
+          observer: '_scheduleReload'
+        },
+
+        /**
+         * Whitelist for all formats to allow. Defaults to enable all formats
+         * @property formats
+         * @type Array
+         * @default null
+         */
+        formats: {
+          type: Array,
+          value: function() { return null; },
+          observer: '_scheduleReload'
+        },
+
+        /**
+         * The Quill theme. Choose either "snow" or "bubble".
+         * @property theme
+         * @type String
+         * @default snow
+         */
+        theme: {
+          type: String,
+          value: 'snow',
+          xtype: 'enum',
+          xvaluelist: [{title: 'Snow', value: 'snow'}, {title: 'Bubble', value: 'bubble'}],
+          observer: '_scheduleReload'
+        },
+
+        /**
+         * Ops Mode if true value will be emitted as quill delta. If false value will be emitted as html
+         * @property opsMode
+         * @type Boolean
+         * @default false
+         */
+        opsMode: {
+          type: Boolean,
+          value: false,
+          observer: '_opsModeChanged'
+        }
       },
 
       observers: [
-        '_internalValidStateUpdate(required, maxChars)'
+        '_internalValidStateUpdate(required, maxChars)',
+        '_scheduleReload(placeholder, formats, theme)'
       ],
 
       $meta: [{
@@ -143,18 +258,73 @@
       },
 
       ready: function() {
+        this._reloadTimeout = null;
+        this._init();
+      },
+
+      _scheduleReload: function (placeholder, formats, theme, modules, toolbar) {
+        if (this._reloadTimeout === null) {
+          var self = this;
+          this._reloadTimeout = window.setTimeout(function(){
+            self._init();
+          }, 0);
+        }
+      },
+
+      _init: function () {
 
         var self = this;
-        var quillElement = this.$.quillElement;
-        quillElement.addEventListener('text-change', function(event) {
+
+        var editorContainer = this.$.editorContainer;
+        var children = editorContainer.children;
+        for (var i = children.length - 1; i >= 0; i--) {
+          var child = children[i];
+          Polymer.dom(child.parentElement).removeChild(child);
+        }
+
+        this.modules = {
+          formula: false,
+          syntax: false,
+          toolbar: this.$.toolbarContainer
+        };
+
+        var configuration = {
+          bounds: this,
+          modules: this.modules,
+          theme: this.theme,
+          readOnly: this.readOnly,
+          placeholder: this.placeholder
+        };
+        if (this.formats != null) {
+          configuration.formats = this.formats;
+        }
+        this.quill = new Quill(editorContainer, configuration);
+
+        this.quill.on('text-change', function (event) {
           if (self._ignoreQuillTextChanged) { return; }
-          event.stopPropagation();
           self.validate();
         });
 
-        this._isReady = true;
-        this._valueChanged(this.value, "called from ready");
-        this._internalValidStateUpdate(this.required, this.maxChars);
+        // Make the custom styles work (quill adds html elements after ready is called)
+        for (var i = 0; i < editorContainer.children.length; i++) {
+          this.scopeSubtree(editorContainer.children[i], true);
+        }
+
+        if (this.disabled) {
+          this.quill.disable();
+        }
+
+        // this._isReady = true;
+        // this._valueChanged(this.value, "called from ready");
+        // this._internalValidStateUpdate(this.required, this.maxChars);
+
+        // make sure init is not called again
+        window.clearTimeout(this._reloadTimeout);
+        this._reloadTimeout = null;
+      },
+
+      _opsModeChanged: function (newValue, oldValue) {
+
       },
 
       _disabledChanged: function(newValue, oldValue) {
@@ -188,12 +358,17 @@
 
         if (!this._isInternalUpdate) {
           this._ignoreQuillTextChanged = true;
-          try {
-            var parsedValue = JSON.parse(valueToSet);
-            quillElement.setContents(parsedValue);
-          } catch (e) {
-            console.log(e);
+          if (this.opsMode) {
+            try {
+              var parsedValue = JSON.parse(valueToSet);
+              quillElement.setContents(parsedValue);
+            } catch (e) {
+              console.log(e);
+            }
+          } else {
+            Polymer.dom(quillElement.quill.root).innerHTML = this.value;
           }
+
           this._ignoreQuillTextChanged = false;
 
           if (this.autoValidate) { this._validate(true); }
@@ -219,17 +394,27 @@
         var inputValue = JSON.stringify(quillDelta);
         var quillLength = this._getQuillDeltaLength(inputValue);
 
-        if ([null, "null"].indexOf(this.value) !== -1 && quillLength > 1 )  {
+        if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1 )  {
           // if value is set to null but quill input is not empty set value to input value
           this._isInternalUpdate = true;
-          this.value = inputValue;
+          if (this.opsMode) {
+            this.value = inputValue;
+          } else {
+            this.value = this.$.quillElement.quill.root.innerHTML;
+          }
           this._isInternalUpdate = false;
-        } else if ([null, "null"].indexOf(this.value) === -1) {
+        } else if ([null, "null", ""].indexOf(this.value) === -1) {
           // if value is not null
           var valueQuillLength = this._getQuillDeltaLength(this.value);
-          if (valueQuillLength !== quillLength || (valueQuillLength > 1 && this.value !== inputValue)) {
+          var cmpValue = this.value.replace(/\\n/gm,"");
+          var cmpInputValue = inputValue.replace(/\\n/gm,"");
+          if (valueQuillLength !== -1 && (valueQuillLength !== quillLength || (valueQuillLength > 1 && cmpValue !== cmpInputValue))) {
             this._isInternalUpdate = true;
-            this.value = inputValue;
+            if (this.opsMode) {
+              this.value = inputValue;
+            } else {
+              this.value = this.$.quillElement.quill.root.innerHTML;
+            }
             this._isInternalUpdate = false;
           }
         }
@@ -280,7 +465,7 @@
           return totalLength;
         } catch (e) {
           // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
-          return 1;
+          return -1;
         }
       }
 

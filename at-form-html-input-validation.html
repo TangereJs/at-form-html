@@ -186,8 +186,24 @@
         };
         var required_ = Boolean(required);
 
-        // if required is true return true if value is not undefined, null or ""
-        validationResult.isValid = !required_ || getQuillDeltaLength(value) > 1;
+        // if required is true and value is null => valid = false
+        // if required is true and value is not a quill object in JSON form => valid = true
+        // if required is true and value is a quill object in JSON form => valid = true
+        var isNull = [null, "null"].indexOf(value) !== -1;
+        validationResult.isValid = !required_ || !isNull;
+        if (!validationResult.isValid) {
+          validationResult.errorMessage = localizer("This field is required.");
+          return validationResult;
+        }
+
+        var quillDeltaLength = getQuillDeltaLength(value);
+        var notQuillJsonString = quillDeltaLength === -1;
+        if (notQuillJsonString) {
+          validationResult.isValid = !required_ || notQuillJsonString;
+        } else {
+          validationResult.isValid = !required_ || quillDeltaLength > 1;
+        }
+
         if (!validationResult.isValid) {
           validationResult.errorMessage = localizer("This field is required.");
         }
@@ -231,7 +247,7 @@
           return totalLength;
         } catch (e) {
           // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
-          return 1;
+          return -1;
         }
       }
 
