@@ -27,7 +27,7 @@
       }
     </style>
     <div id="atContainer" class="at-container">
-      <iron-label id="label" for="quillElement">{{label}}</iron-label>
+      <iron-label id="label" on-tap="focus">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
         <div id="toolbarContainer">
           <!-- <span class="ql-formats">
@@ -35,7 +35,7 @@
           <select class="ql-size"></select>
           </span> -->
           <span class="ql-formats">
-            <select class="ql-header">
+            <select class="ql-header"  hidden$="{{standardToolbar}}">
               <option value="1">Header 1</option>
               <option value="2">Header 2</option>
               <option value="3">Header 3</option>
@@ -43,7 +43,7 @@
               <option value="5">Header 5</option>
               <option value="7">Normal</option>
             </select>
-            <select class="ql-header">
+            <select class="ql-header"  hidden$="{{!standardToolbar}}">
               <option value="1">Header 1</option>
               <option value="2">Header 2</option>
               <option value="3">Header 3</option>
@@ -184,8 +184,9 @@
          */
         value: {
           type: String,
-          xtype: 'json',
-          mode: 'html',
+          xtype: 'code',
+          mode: 'htmlmixed',
+          xgridcols: "12",
           value: "",
           observer: '_valueChanged',
           title: 'Value'
@@ -239,7 +240,20 @@
           type: Boolean,
           value: false,
           observer: '_opsModeChanged'
-        }
+        },
+
+        /**
+         * Type of toolbar. Standard toolbar has basic functions.
+         * When false, full toolbar is displayed.
+         * @property standardToolbar
+         * @type Boolean
+         * @default true
+         */
+        standardToolbar: {
+          type: Boolean,
+          value: true,
+          title: 'Standard toolbar'
+        },
       },
 
       observers: [
@@ -260,12 +274,15 @@
       ready: function() {
         this._reloadTimeout = null;
         this._init();
+
+        this._opsModeChanged(this.opsMode, "called from ready");
+        this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _scheduleReload: function (placeholder, formats, theme, modules, toolbar) {
+      _scheduleReload: function (placeholder, formats, theme) {
         if (this._reloadTimeout === null) {
           var self = this;
-          this._reloadTimeout = window.setTimeout(function(){
+          this._reloadTimeout = window.setTimeout(function() {
             self._init();
           }, 0);
         }
@@ -314,17 +331,17 @@
           this.quill.disable();
         }
 
-        // this._isReady = true;
-        // this._valueChanged(this.value, "called from ready");
-        // this._internalValidStateUpdate(this.required, this.maxChars);
-
         // make sure init is not called again
         window.clearTimeout(this._reloadTimeout);
         this._reloadTimeout = null;
+
+        this._isReady = true;
+        this._valueChanged(this.value, "called from ready");
       },
 
       _opsModeChanged: function (newValue, oldValue) {
-
+        if (!this._isReady) { return; }
+        this._setOutputValue();
       },
 
       _disabledChanged: function(newValue, oldValue) {
@@ -333,9 +350,8 @@
         var contentContainer = this.$.contentContainer;
         this.toggleClass('disabled', newValue, contentContainer);
 
-        var quillElement = this.$.quillElement;
         if (this._isReady) {
-          quillElement.disable(newValue);
+          this.quill.enable(!newValue);
         }
       },
 
@@ -354,21 +370,10 @@
         if (!this._isReady) { return; }
 
         var valueToSet = [null, "null"].indexOf(newValue) !== -1 ? "" : newValue;
-        var quillElement = this.$.quillElement;
 
         if (!this._isInternalUpdate) {
           this._ignoreQuillTextChanged = true;
-          if (this.opsMode) {
-            try {
-              var parsedValue = JSON.parse(valueToSet);
-              quillElement.setContents(parsedValue);
-            } catch (e) {
-              console.log(e);
-            }
-          } else {
-            Polymer.dom(quillElement.quill.root).innerHTML = this.value;
-          }
-
+          this._setQuillValue(valueToSet);
           this._ignoreQuillTextChanged = false;
 
           if (this.autoValidate) { this._validate(true); }
@@ -378,11 +383,11 @@
       },
 
       _getFocusableElement: function() {
-        return this.$.quillElement;
+        return this;
       },
 
       focus: function () {
-        this._getFocusableElement().focus();
+        this.quill.focus();
       },
 
       validate: function (showError) {
@@ -390,32 +395,19 @@
         if (showError === undefined) { showError = this.autoValidate; }
 
         // validate must validate the current value
-        var quillDelta = this.$.quillElement.getContents();
-        var inputValue = JSON.stringify(quillDelta);
-        var quillLength = this._getQuillDeltaLength(inputValue);
+        var inputValue = this._getQuillValue();
+        var quillLength = this._getQuillValueLength(inputValue);
 
-        if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1 )  {
+        if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1 ) {
           // if value is set to null but quill input is not empty set value to input value
-          this._isInternalUpdate = true;
-          if (this.opsMode) {
-            this.value = inputValue;
-          } else {
-            this.value = this.$.quillElement.quill.root.innerHTML;
-          }
-          this._isInternalUpdate = false;
+          this._setOutputValue(inputValue);
         } else if ([null, "null", ""].indexOf(this.value) === -1) {
           // if value is not null
-          var valueQuillLength = this._getQuillDeltaLength(this.value);
+          var valueQuillLength = this._getQuillValueLength(this.value);
           var cmpValue = this.value.replace(/\\n/gm,"");
           var cmpInputValue = inputValue.replace(/\\n/gm,"");
           if (valueQuillLength !== -1 && (valueQuillLength !== quillLength || (valueQuillLength > 1 && cmpValue !== cmpInputValue))) {
-            this._isInternalUpdate = true;
-            if (this.opsMode) {
-              this.value = inputValue;
-            } else {
-              this.value = this.$.quillElement.quill.root.innerHTML;
-            }
-            this._isInternalUpdate = false;
+            this._setOutputValue(inputValue);
           }
         }
 
@@ -447,26 +439,100 @@
         this.toggleClass('error', !isValid, hint);
       },
 
-      _getQuillDeltaLength: function(quillDeltaAsJson) {
-        function isArray(obj) {
-          return Object.prototype.toString.call(obj) === "[object Array]";
+      //*******************************************************************************************************************
+      // Helper functions
+      //*******************************************************************************************************************
+      /*
+        Sets the .value property for at-form-html (which is the output value)
+        newValue input parameter is either undefined, quill delta (as json string or object) or html string
+        if newValue is undefined current content of this.quill.getContents() will be set as output
+        otherwise content of newValue will be set as output
+        if newValue is empty html or empty quill delta object, output value will be set to empty string
+      */
+      _setOutputValue: function (newValue) {
+        var inputValue = newValue;
+        if (!newValue) {
+          inputValue = this._getQuillValue();
         }
 
-        try {
-          var quillDeltaObj = JSON.parse(quillDeltaAsJson);
-          var ops = quillDeltaObj.ops;
-          if (!ops || !isArray(ops) || !ops.length) { return 1; }
+        this._isInternalUpdate = true;
+        var valueLength = this._getQuillValueLength(inputValue);
+        inputValue = valueLength === 1 ? "" : inputValue;
+        this.value = inputValue;
+        this._fireValueChangedEvent(inputValue);
+        this._isInternalUpdate = false;
+      },
 
-          var totalLength = 0;
-          ops.forEach(function(op, index) {
-            totalLength += (op.insert.trim()).length;
-          });
-
-          return totalLength;
-        } catch (e) {
-          // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
-          return -1;
+      /*
+        Returns current quill value, respecting opsMode property
+        if opsMode is true, quill delta object will be returned as json string
+        if opsMode is false, innerHTML of quill.root will be returned
+      */
+      _getQuillValue: function() {
+        var result = "";
+        var opsMode = this.opsMode;
+        if (opsMode) {
+          // return value as quill delta object as json
+          result = JSON.stringify(this.quill.getContents());
+        } else {
+          // return value as html
+          result = Polymer.dom(this.quill.root).innerHTML;
         }
+        return result;
+      },
+
+      /*
+        Sets quill value, respecting opsMode property
+        if opsMode is true quill value is set using quill.setContents function
+        if opsMode is false quill value is set using quill.clipboard.dangerouslyPasteHTML function
+      */
+      _setQuillValue: function(newValue) {
+        var opsMode = this.opsMode;
+        if (opsMode) {
+          try {
+            var parsedObject = JSON.parse(newValue);
+            this.quill.setContents(parsedObject);
+          } catch (e) {
+            console.log(e);
+            this.quill.setContents(newValue);
+          }
+        } else {
+          this.quill.clipboard.dangerouslyPasteHTML(newValue);
+        }
+      },
+
+      /*
+        Calculates and retunrs length of passed quillStringValue
+        if quillStringValue is quill delta json string its set on a quill instance and result of quill.getLength() function is returned
+        if quillStringValue is html string its set on a quill instance and result of quill.getLength() function is returned
+      */
+      _getQuillValueLength: function(quillStringValue) {
+        var measuringInstance = this._getLentghMeasuringInstance();
+
+        if (this.opsMode) {
+          try {
+            var parsedObject = JSON.parse(quillStringValue);
+            measuringInstance.setContents(parsedObject);
+          } catch (e) {
+            measuringInstance.setContents(quillStringValue);
+          }
+        } else {
+          measuringInstance.clipboard.dangerouslyPasteHTML(quillStringValue);
+        }
+
+        return measuringInstance.getLength();
+      },
+
+      /*
+        Getter for a special private variable of type Quill used for measuring length of string values named __lengthMeasuringInstance
+      */
+      _getLentghMeasuringInstance: function() {
+        if (!this.__lengthMeasuringInstance) {
+          var container = document.createElement('div');
+          this.__lengthMeasuringInstance = new Quill(container, {});
+        }
+        var result = this.__lengthMeasuringInstance;
+        return result;
       }
 
     });
