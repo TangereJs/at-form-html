@@ -18,7 +18,6 @@
 
       :host {
         @apply(--at-form-host);
-        display: block;
       }
 
       #hint {
@@ -26,70 +25,85 @@
         margin-bottom: 8px;
       }
     </style>
+    <!--
+      Why is this here?
+      Inside at-form-html quill instace is initialized multiple times
+      toolbar breaks if multiple quill instances are created over same toolbar HTML
+      That is why we have hidden toolbarPrototype
+      When needed, toolbarPrototype.innerHTML is given to toolbarContainer.innerHTML
+      and quill instance is created over toolbarContainer
+    -->
+    <div id="toolbarPrototype" style="display: none">
+      <!-- <span class="ql-formats">
+      <select class="ql-font"></select>
+      <select class="ql-size"></select>
+      </span> -->
+      <span class="ql-formats">
+        <select class="ql-header">
+          <option value="1">Header 1</option>
+          <option value="2">Header 2</option>
+          <option value="3">Header 3</option>
+          <option value="4">Header 4</option>
+          <option selected="selected">Normal</option>
+        </select>
+        <select class="ql-size">
+          <option value="small">Small</option>
+          <option selected="selected">Normal</option>
+          <option value="large">Large</option>
+          <option value="huge">Huge</option>
+        </select>
+        <!-- <select class="ql-header" hidden$="{{!standardToolbar}}">
+          <option value="1">Header 1</option>
+          <option value="2">Header 2</option>
+          <option value="3">Header 3</option>
+          <option value="7">Normal</option>
+        </select> -->
+      </span>
+      <span class="ql-formats">
+        <button class="ql-bold" title="Bold"></button>
+        <button class="ql-italic" title="Italic"></button>
+        <button class="ql-underline" title="Underline"></button>
+        <button class="ql-strike" title="strike" hidden$="{{standardToolbar}}"></button>
+      </span>
+      <span class="ql-formats" hidden$="{{standardToolbar}}">
+        <select class="ql-color" title="Text Color"></select>
+        <select class="ql-background" title="Text Background Color"></select>
+      </span>
+      <!-- <span class="ql-formats">
+      <button class="ql-script" value="sub"></button>
+      <button class="ql-script" value="super"></button>
+      </span> -->
+      <span class="ql-formats" hidden$="{{standardToolbar}}">
+        <button class="ql-header" value="1" title="Header 1"></button>
+        <button class="ql-header" value="2" title="Header 2"></button>
+        <button class="ql-blockquote" title="Blockquote"></button>
+        <!-- <button class="ql-code-block" title="Code Clock"></button> -->
+      </span>
+      <span class="ql-formats">
+        <button class="ql-list" value="ordered" title="Numbered List"></button>
+        <button class="ql-list" value="bullet" title="Bullet List"></button>
+        <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{standardToolbar}}"></button>
+        <button class="ql-indent" value="+1" title="Indent" hidden$="{{standardToolbar}}"></button>
+      </span>
+      <span class="ql-formats" hidden$="{{standardToolbar}}">
+        <!-- <button class="ql-direction" value="rtl"></button> -->
+        <select class="ql-align" title="Align">></select>
+      </span>
+      <span class="ql-formats">
+        <button class="ql-link" title="Link"></button>
+        <button class="ql-image" title="Image" hidden$="{{standardToolbar}}"></button>
+        <button class="ql-video" title="Video" hidden$="{{standardToolbar}}"></button>
+        <!-- <button class="ql-formula"></button>> -->
+      </span>
+      <span class="ql-formats">
+        <button class="ql-clean" title="Clear Formating"></button>
+      </span>
+    </div>
+
     <div id="atContainer" class="at-container">
       <iron-label id="label" on-tap="focus">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
-        <div id="toolbarContainer">
-          <!-- <span class="ql-formats">
-          <select class="ql-font"></select>
-          <select class="ql-size"></select>
-          </span> -->
-          <span class="ql-formats">
-            <select class="ql-header" hidden$="{{standardToolbar}}">
-              <option value="1">Header 1</option>
-              <option value="2">Header 2</option>
-              <option value="3">Header 3</option>
-              <option value="4">Header 4</option>
-              <option value="5">Header 5</option>
-              <option value="7">Normal</option>
-            </select>
-            <select class="ql-header" hidden$="{{!standardToolbar}}">
-              <option value="1">Header 1</option>
-              <option value="2">Header 2</option>
-              <option value="3">Header 3</option>
-              <option value="7">Normal</option>
-            </select>
-          </span>
-          <span class="ql-formats">
-            <button class="ql-bold" title="Bold"></button>
-            <button class="ql-italic" title="Italic"></button>
-            <button class="ql-underline" title="Underline"></button>
-            <button class="ql-strike" title="strike" hidden$="{{standardToolbar}}"></button>
-          </span>
-          <span class="ql-formats" hidden$="{{standardToolbar}}">
-            <select class="ql-color" title="Text Color"></select>
-            <select class="ql-background" title="Text Background Color"></select>
-          </span>
-          <!-- <span class="ql-formats">
-          <button class="ql-script" value="sub"></button>
-          <button class="ql-script" value="super"></button>
-          </span> -->
-          <span class="ql-formats" hidden$="{{standardToolbar}}">
-            <button class="ql-header" value="1" title="Header 1"></button>
-            <button class="ql-header" value="2" title="Header 2"></button>
-            <button class="ql-blockquote" title="Blockquote"></button>
-            <!-- <button class="ql-code-block" title="Code Clock"></button> -->
-          </span>
-          <span class="ql-formats">
-            <button class="ql-list" value="ordered" title="Numbered List"></button>
-            <button class="ql-list" value="bullet" title="Bullet List"></button>
-            <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{standardToolbar}}"></button>
-            <button class="ql-indent" value="+1" title="Indent" hidden$="{{standardToolbar}}"></button>
-          </span>
-          <span class="ql-formats" hidden$="{{standardToolbar}}">
-            <!-- <button class="ql-direction" value="rtl"></button> -->
-            <select class="ql-align" title="Align">></select>
-          </span>
-          <span class="ql-formats">
-            <button class="ql-link" title="Link"></button>
-            <button class="ql-image" title="Image" hidden$="{{standardToolbar}}"></button>
-            <button class="ql-video" title="Video" hidden$="{{standardToolbar}}"></button>
-            <!-- <button class="ql-formula"></button>> -->
-          </span>
-          <span class="ql-formats">
-            <button class="ql-clean" title="Clear Formating"></button>
-          </span>
-        </div>
+        <div id="toolbarContainer"></div>
         <div id="editorContainer"></div>
       </div>
       <div id="hint"></div>
@@ -299,6 +313,9 @@
           Polymer.dom(child.parentElement).removeChild(child);
         }
 
+        var toolbarPrototype = this.$.toolbarPrototype;
+        Polymer.dom(this.$.toolbarContainer).innerHTML = Polymer.dom(toolbarPrototype).innerHTML;
+
         this.modules = {
           formula: false,
           syntax: false,
@@ -327,11 +344,6 @@
           if (self._ignoreQuillTextChanged) { return; }
           self.validate();
         });
-
-        // Make the custom styles work (quill adds html elements after ready is called)
-        // for (var i = 0; i < editorContainer.children.length; i++) {
-        //   this.scopeSubtree(editorContainer.children[i], true);
-        // }
 
         if (this.disabled) {
           this.quill.disable();
