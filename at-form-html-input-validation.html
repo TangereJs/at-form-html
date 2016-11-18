@@ -189,25 +189,12 @@
         // if required is true and value is null => valid = false
         // if required is true and value is not a quill object in JSON form => valid = true
         // if required is true and value is a quill object in JSON form => valid = true
-        var isNull = [null, "null"].indexOf(value) !== -1;
+        var isNull = [null, "null", ""].indexOf(value) !== -1;
         validationResult.isValid = !required_ || !isNull;
         if (!validationResult.isValid) {
           validationResult.errorMessage = localizer("This field is required.");
-          return validationResult;
         }
-
-        var quillDeltaLength = getQuillDeltaLength(value);
-        var notQuillJsonString = quillDeltaLength === -1;
-        if (notQuillJsonString) {
-          validationResult.isValid = !required_ || notQuillJsonString;
-        } else {
-          validationResult.isValid = !required_ || quillDeltaLength > 1;
-        }
-
-        if (!validationResult.isValid) {
-          validationResult.errorMessage = localizer("This field is required.");
-        }
-
+        
         return validationResult;
       }
 

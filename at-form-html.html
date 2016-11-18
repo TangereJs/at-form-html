@@ -35,7 +35,7 @@
           <select class="ql-size"></select>
           </span> -->
           <span class="ql-formats">
-            <select class="ql-header"  hidden$="{{standardToolbar}}">
+            <select class="ql-header" hidden$="{{standardToolbar}}">
               <option value="1">Header 1</option>
               <option value="2">Header 2</option>
               <option value="3">Header 3</option>
@@ -43,7 +43,7 @@
               <option value="5">Header 5</option>
               <option value="7">Normal</option>
             </select>
-            <select class="ql-header"  hidden$="{{!standardToolbar}}">
+            <select class="ql-header" hidden$="{{!standardToolbar}}">
               <option value="1">Header 1</option>
               <option value="2">Header 2</option>
               <option value="3">Header 3</option>
@@ -68,7 +68,7 @@
             <button class="ql-header" value="1" title="Header 1"></button>
             <button class="ql-header" value="2" title="Header 2"></button>
             <button class="ql-blockquote" title="Blockquote"></button>
-            <button class="ql-code-block" title="Code Clock"></button>
+            <!-- <button class="ql-code-block" title="Code Clock"></button> -->
           </span>
           <span class="ql-formats">
             <button class="ql-list" value="ordered" title="Numbered List"></button>
@@ -251,7 +251,7 @@
          */
         standardToolbar: {
           type: Boolean,
-          value: true,
+          value: false,
           title: 'Standard toolbar'
         },
       },
@@ -315,6 +315,12 @@
         if (this.formats != null) {
           configuration.formats = this.formats;
         }
+
+        var Parchment = Quill.import('parchment');
+        var Block = Parchment.query('block');
+        Block.tagName = 'DIV';
+        Quill.register(Block, true);
+
         this.quill = new Quill(editorContainer, configuration);
 
         this.quill.on('text-change', function (event) {
@@ -323,9 +329,9 @@
         });
 
         // Make the custom styles work (quill adds html elements after ready is called)
-        for (var i = 0; i < editorContainer.children.length; i++) {
-          this.scopeSubtree(editorContainer.children[i], true);
-        }
+        // for (var i = 0; i < editorContainer.children.length; i++) {
+        //   this.scopeSubtree(editorContainer.children[i], true);
+        // }
 
         if (this.disabled) {
           this.quill.disable();
@@ -380,6 +386,7 @@
         }
 
         this._fireValueChangedEvent(this.value);
+
       },
 
       _getFocusableElement: function() {
