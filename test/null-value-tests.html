@@ -56,18 +56,24 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="propertyTests">
+    <template>
+      <at-form-html></at-form-html>
+    </template>
+  </test-fixture>
+
   <script>
     suite('null value tests', function() {
 
       test('attribute value set to null', function(done) {
         var input = fixture('attrNullValue');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -85,13 +91,13 @@
 
       test('attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValue');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -109,25 +115,23 @@
 
       test('required and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndRequired');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.required, true, 'required is not set correctly');
-        assert.equal(input.valid, false, 'element is not valid');
+        assert.equal(input.valid, true, 'element is not valid');
 
-        var quillString = '{"ops":[{"insert":"lorem ipsum"}]}';
-        var quillStringVal = '{"ops":[{"insert":"lorem ipsum"}]}';
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, quillStringVal, 'event detail value not set correctly');
-          assert.equal(input.value, quillStringVal, 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
           assert.equal(input.required, true, 'required is not set correctly');
           assert.equal(input.valid, true, 'element is not invalid');
           eventCount += 1;
         });
 
-        input.value = quillString;
-        Polymer.dom(input).setAttribute('value', quillString);
-        input.value = quillString;
-        Polymer.dom(input).setAttribute('value', quillString);
+        input.value = 'lorem ipsum';
+        Polymer.dom(input).setAttribute('value', 'lorem ipsum');
+        input.value = 'lorem ipsum';
+        Polymer.dom(input).setAttribute('value', 'lorem ipsum');
 
         flush(function() {
           assert.equal(eventCount, 1);
@@ -137,14 +141,14 @@
 
       test('required and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndRequired');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.required, true, 'required is not set correctly');
-        assert.equal(input.valid, false, 'value not set correctly');
+        assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.required, true, 'required is not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
@@ -163,14 +167,14 @@
 
       test('maxChars and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndMaxChars');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
         assert.equal(input.valid, true, 'element is not valid as value is too long');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
           assert.equal(input.valid, true, 'element is not invalid');
           eventCount += 1;
@@ -189,14 +193,14 @@
 
       test('maxChars and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndMaxChars');
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
         assert.equal(input.valid, true, 'value is to long');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
@@ -218,7 +222,7 @@
       /********************************************************************************/
 
       test('property value set to null', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.value = null;
 
         assert.equal(input.value, null, 'value not set correctly');
@@ -226,8 +230,8 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -244,16 +248,16 @@
       });
 
       test('property value set to "null"', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.value = "null";
 
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.valid, true, 'element is not valid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'element is not valid');
           eventCount += 1;
         });
@@ -270,7 +274,7 @@
       });
 
       test('property value set to null and required', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.required = true;
         input.value = null;
 
@@ -279,8 +283,8 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -297,17 +301,17 @@
       });
 
       test('property value set to "null" and required', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.required = true;
         input.value = "null";
 
-        assert.equal(input.value, "null", 'value not set correctly');
-        assert.equal(input.valid, false, 'element is invalid');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        assert.equal(input.valid, true, 'element is invalid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'element is not valid');
           eventCount += 1;
         });
@@ -324,7 +328,7 @@
       });
 
       test('property value set to null and maxChars', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.maxChars = 2;
         input.value = null;
 
@@ -333,8 +337,8 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -351,17 +355,17 @@
       });
 
       test('property value set to "null" and maxChars', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.maxChars = 2;
         input.value = "null";
 
-        assert.equal(input.value, "null", 'value not set correctly');
+        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
         assert.equal(input.valid, true, 'element is valid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'element is valid');
           eventCount += 1;
         });
@@ -379,7 +383,7 @@
       });
 
       test('property value set to null and user input is empty string', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.value = null;
 
         assert.equal(input.value, null, 'value not set correctly');
@@ -387,16 +391,13 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '', 'event detail value not set correctly');
-          assert.equal(input.value, '', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div><br></div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div><br></div>', 'event detail value not set correctly');
           assert.equal(input.valid, true, 'element is invalid');
           eventCount += 1;
         });
 
-        var inputElement = input.$.quillElement;
-
-        inputElement.setText("");
-        TestHelpers.fireEvent('change', {}, inputElement);
+        input.quill.setText("");
 
         flush(function() {
           assert.equal(eventCount, 0);
@@ -405,7 +406,7 @@
       });
 
       test('property value set to null and user input is non empty string', function(done) {
-        var input = document.createElement('at-form-html');
+        var input = fixture('propertyTests');
         input.value = null;
 
         assert.equal(input.value, null, 'value not set correctly');
@@ -413,16 +414,14 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', 'event detail value not set correctly');
-          assert.equal(input.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
 
           assert.equal(input.valid, true, 'element is invalid');
           eventCount += 1;
         });
 
-        var inputElement = input.$.quillElement;
-
-        inputElement.setText("lorem ipsum");
+        input.quill.setText("lorem ipsum");
 
         flush(function() {
           assert.equal(eventCount, 1, "event count is not correct");

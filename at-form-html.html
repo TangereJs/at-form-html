@@ -381,20 +381,22 @@
       },
 
       _valueChanged: function(newValue, oldValue) {
-        if (!this._isReady) { return; }
+        if (!this._isReady || this._isInternalUpdate) { return; }
 
-        var valueToSet = [null, "null"].indexOf(newValue) !== -1 ? "" : newValue;
+        var valueToSet = newValue === null ? "" : newValue;
 
-        if (!this._isInternalUpdate) {
-          this._ignoreQuillTextChanged = true;
-          this._setQuillValue(valueToSet);
-          this._ignoreQuillTextChanged = false;
+        this._ignoreQuillTextChanged = true;
+        this._setQuillValue(valueToSet);
+        this._isInternalUpdate = true;
+        this.value = newValue !== null ? this._getQuillValue() : newValue;
+        this._isInternalUpdate = false;
+        this._ignoreQuillTextChanged = false;
 
-          if (this.autoValidate) { this._validate(true); }
-        }
+        if (this.value === oldValue) { return; }
+
+        if (this.autoValidate) { this._validate(true); }
 
         this._fireValueChangedEvent(this.value);
-
       },
 
       _getFocusableElement: function() {
