@@ -39,25 +39,20 @@
       <select class="ql-size"></select>
       </span> -->
       <span class="ql-formats">
-        <select class="ql-header">
+        <select class="ql-header"  hidden$="{{standardToolbar}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
           <option value="4">Header 4</option>
+          <option value="5">Header 5</option>
           <option selected="selected">Normal</option>
         </select>
-        <select class="ql-size">
-          <option value="small">Small</option>
-          <option selected="selected">Normal</option>
-          <option value="large">Large</option>
-          <option value="huge">Huge</option>
-        </select>
-        <!-- <select class="ql-header" hidden$="{{!standardToolbar}}">
+        <select class="ql-header"  hidden$="{{!standardToolbar}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
-          <option value="7">Normal</option>
-        </select> -->
+          <option selected="selected">Normal</option>
+        </select>
       </span>
       <span class="ql-formats">
         <button class="ql-bold" title="Bold"></button>
@@ -272,7 +267,7 @@
 
       observers: [
         '_internalValidStateUpdate(required, maxChars)',
-        '_scheduleReload(placeholder, formats, theme)'
+        '_scheduleReload(placeholder, formats, theme, standardToolbar)'
       ],
 
       $meta: [{
