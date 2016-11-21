@@ -280,7 +280,7 @@
         this.toggleClass("hidden", newValue, this.$.label);
       },
 
-      ready: function() {
+      attached: function() {
         this._reloadTimeout = null;
         this._init();
 
@@ -289,6 +289,7 @@
       },
 
       _scheduleReload: function (placeholder, formats, theme) {
+        if (!this.parentElement) { return; }
         if (this._reloadTimeout === null) {
           var self = this;
           this._reloadTimeout = window.setTimeout(function() {
