@@ -210,7 +210,6 @@
         placeholder: {
           type: String,
           value: null,
-          observer: '_scheduleReload'
         },
 
         /**
@@ -221,8 +220,7 @@
          */
         formats: {
           type: Array,
-          value: function() { return null; },
-          observer: '_scheduleReload'
+          value: function() { return []; },
         },
 
         /**
@@ -236,7 +234,6 @@
           value: 'snow',
           xtype: 'enum',
           xvaluelist: [{title: 'Snow', value: 'snow'}, {title: 'Bubble', value: 'bubble'}],
-          observer: '_scheduleReload'
         },
 
         /**
@@ -267,7 +264,7 @@
 
       observers: [
         '_internalValidStateUpdate(required, maxChars)',
-        '_scheduleReload(placeholder, formats, theme, standardToolbar)'
+        '_scheduleReload(formats, placeholder, theme, standardToolbar)'
       ],
 
       $meta: [{
@@ -288,7 +285,7 @@
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _scheduleReload: function (placeholder, formats, theme) {
+      _scheduleReload: function (formats, placeholder, theme, standardToolbar) {
         if (!this.parentElement) { return; }
         if (this._reloadTimeout === null) {
           var self = this;
@@ -325,8 +322,14 @@
           readOnly: this.readOnly,
           placeholder: this.placeholder
         };
-        if (this.formats != null) {
-          configuration.formats = this.formats;
+        if (this.formats.length) {
+          // convert array of objects to array of strings
+          var arrayOfStrings = [];
+          for (var i = 0; i < this.formats.length; i++) {
+            var formatObj = this.formats[i];
+            arrayOfStrings.push(formatObj.value);
+          }
+          configuration.formats = arrayOfStrings;
         }
 
         var Parchment = Quill.import('parchment');
@@ -388,7 +391,7 @@
         this._ignoreQuillTextChanged = true;
         this._setQuillValue(valueToSet);
         this._isInternalUpdate = true;
-        this.value = newValue !== null ? this._getQuillValue() : newValue;
+        this.value = newValue !== null && newValue !== "" ? this._getQuillValue() : newValue;
         this._isInternalUpdate = false;
         this._ignoreQuillTextChanged = false;
 

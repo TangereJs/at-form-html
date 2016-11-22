@@ -43,10 +43,10 @@
 
       test('validate like blur, set input.value', function() {
         var input = fixture('validateLikeBlur');
-        var inputElement = input.$.quillElement;
+        var inputElement = input.quill;
 
         assert.equal(input.value, "", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "", 'Input element value is not correct');
+        assert.equal(inputElement.getText(), "\n", 'Input element value is not correct');
 
         inputElement.focus();
         var activeElement = document.activeElement;
@@ -65,13 +65,13 @@
 
         input.value = "lorem ipsum";
 
-        assert.equal(input.value, "lorem ipsum", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "lorem ipsum", 'Input element value is not correct');
+        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         input.validate();
 
-        assert.equal(input.value, "lorem ipsum", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "lorem ipsum", 'Input element value is not correct');
+        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         if (getDomMode(input) === 'shadowDOM') {
           // quill.js doesn't work in shadowDOM
@@ -83,10 +83,10 @@
 
       test('validate like blur, set inputElement.getText().trim()', function() {
         var input = fixture('validateLikeBlur');
-        var inputElement = input.$.quillElement;
+        var inputElement = input.quill;
 
         assert.equal(input.value, "", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "", 'Input element value is not correct');
+        assert.equal(inputElement.getText(), "\n", 'Input element value is not correct');
 
         inputElement.focus();
         var activeElement = document.activeElement;
@@ -100,13 +100,13 @@
 
         inputElement.setText("lorem ipsum");
 
-        assert.equal(input.value, "lorem ipsum", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "lorem ipsum", 'Input element value is not correct');
+        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         input.validate();
 
-        assert.equal(input.value, "lorem ipsum", 'Input value is not correct');
-        assert.equal(inputElement.getText().trim(), "lorem ipsum", 'Input element value is not correct');
+        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         if (getDomMode(input) === 'shadowDOM') {
           // quill.js doesn't work in shadowDOM

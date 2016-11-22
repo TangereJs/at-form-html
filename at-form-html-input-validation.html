@@ -194,7 +194,7 @@
         if (!validationResult.isValid) {
           validationResult.errorMessage = localizer("This field is required.");
         }
-        
+
         return validationResult;
       }
 
@@ -233,8 +233,8 @@
 
           return totalLength;
         } catch (e) {
-          // due to how quilljs works delta length of 1 means empty value becase it contains only a single CRLF character
-          return -1;
+          // value is html; return string length          
+          return quillDeltaAsJson.length;
         }
       }
 

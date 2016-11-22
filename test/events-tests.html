@@ -26,7 +26,7 @@
 
   <test-fixture id="valueAsAttrTextFixture">
     <template>
-      <at-form-html value='{"ops":[{"insert":"lorem ipsum"}]}'></at-form-html>
+      <at-form-html value='lorem ipsum'></at-form-html>
     </template>
   </test-fixture>
 
@@ -39,8 +39,8 @@
         assert.equal(input.value, '', 'initial value not set correctly');
 
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-          assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
           done();
         });
 
@@ -52,7 +52,7 @@
 
       test('setting value attribute doesn\'t trigger value-changed event', function(done) {
         var input = fixture('valueAsAttrTextFixture');
-        assert.equal(input.value, '{"ops":[{"insert":"lorem ipsum\\n"}]}', 'initial value not set correctly');
+        assert.equal(input.value, '<div>lorem ipsum</div>', 'initial value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {

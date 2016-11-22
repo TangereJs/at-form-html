@@ -126,7 +126,7 @@
 
           // setting value to lorem ipsum doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -151,7 +151,7 @@
 
         test('value "lorem ipsum", maxChars 0, autovalidate false', function () {
           var element = fixture('valueLoremIpsummaxChars0autoValidateFalse');
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
           assert.equal(element.autoValidate, false, "autoValidate not set correctly");
 
@@ -177,7 +177,7 @@
 
           // setting value to "lorem ipsum" makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, "");
@@ -197,7 +197,7 @@
 
           // setting value to lorem ipsum makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, "");
@@ -222,7 +222,7 @@
 
         test('value "lorem ipsum", maxChars 10, autovalidate false', function () {
           var element = fixture('valueLoremIpsummaxChars10autoValidateFalse');
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
           assert.equal(element.autoValidate, false, "autoValidate not set correctly");
 
@@ -248,7 +248,7 @@
 
           // setting value to "lorem ipsum" doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -267,7 +267,7 @@
 
           // setting value to lorem ipsum doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -292,7 +292,7 @@
 
         test('value "lorem ipsum", maxChars 0, autovalidate true', function () {
           var element = fixture('valueLoremIpsummaxChars0autoValidateTrue');
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
           assert.equal(element.autoValidate, true, "autoValidate not set correctly");
 
@@ -318,7 +318,7 @@
 
           // setting value to "lorem ipsum" makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, element.T("You can not enter more than {0} characters.", 10));
@@ -337,7 +337,7 @@
 
           // setting value to lorem ipsum makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, element.T("You can not enter more than {0} characters.", 10));
@@ -362,7 +362,7 @@
 
         test('value "lorem ipsum", maxChars 10, autovalidate true', function () {
           var element = fixture('valueLoremIpsummaxChars10autoValidateTrue');
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
           assert.equal(element.autoValidate, true, "autoValidate not set correctly");
 
@@ -388,7 +388,7 @@
 
           // setting value to "lorem ipsum" doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -425,7 +425,7 @@
 
           // setting value to lorem ipsum doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -454,7 +454,7 @@
           element.value = "lorem ipsum";
           element.maxChars = 0;
 
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
           assert.equal(element.autoValidate, false, "autoValidate not set correctly");
 
@@ -480,7 +480,7 @@
 
           // setting value to "lorem ipsum" makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, "");
@@ -503,7 +503,7 @@
 
           // setting value to lorem ipsum makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, "");
@@ -532,7 +532,7 @@
           element.value = "lorem ipsum";
           element.maxChars = 10;
 
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
           assert.equal(element.autoValidate, false, "autoValidate not set correctly");
 
@@ -558,7 +558,7 @@
 
           // setting value to "lorem ipsum" doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -581,7 +581,7 @@
 
           // setting value to lorem ipsum doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -610,7 +610,7 @@
           element.value = "lorem ipsum";
           element.maxChars = 0;
 
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
           assert.equal(element.autoValidate, true, "autoValidate not set correctly");
 
@@ -636,7 +636,7 @@
 
           // setting value to "lorem ipsum" makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, element.T("You can not enter more than {0} characters.", 10));
@@ -659,7 +659,7 @@
 
           // setting value to lorem ipsum makes element invalid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is invalid
           assertErrorMessage(element, element.T("You can not enter more than {0} characters.", 10));
@@ -688,7 +688,7 @@
           element.value = "lorem ipsum";
           element.maxChars = 10;
 
-          assert.equal(element.value, "lorem ipsum", "value not set correctly");
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
           assert.equal(element.autoValidate, true, "autoValidate not set correctly");
 
@@ -714,7 +714,7 @@
 
           // setting value to "lorem ipsum" doesn't change valid state
           element.value = "lorem ipsum";
-          assert.equal(element.value, "lorem ipsum", 'value not set correctly');
+          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
 
           // assert that element is valid
           assertErrorMessage(element, "");
