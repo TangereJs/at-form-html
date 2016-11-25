@@ -39,7 +39,7 @@
       <select class="ql-size"></select>
       </span> -->
       <span class="ql-formats">
-        <select class="ql-header"  hidden$="{{standardToolbar}}">
+        <select class="ql-header"  hidden$="{{_isDefaultToolbar(toolbarMode)}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
@@ -47,7 +47,7 @@
           <option value="5">Header 5</option>
           <option selected="selected">Normal</option>
         </select>
-        <select class="ql-header"  hidden$="{{!standardToolbar}}">
+        <select class="ql-header"  hidden$="{{!_isDefaultToolbar(toolbarMode)}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
@@ -58,9 +58,9 @@
         <button class="ql-bold" title="Bold"></button>
         <button class="ql-italic" title="Italic"></button>
         <button class="ql-underline" title="Underline"></button>
-        <button class="ql-strike" title="strike" hidden$="{{standardToolbar}}"></button>
+        <button class="ql-strike" title="strike" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
       </span>
-      <span class="ql-formats" hidden$="{{standardToolbar}}">
+      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
         <select class="ql-color" title="Text Color"></select>
         <select class="ql-background" title="Text Background Color"></select>
       </span>
@@ -68,7 +68,7 @@
       <button class="ql-script" value="sub"></button>
       <button class="ql-script" value="super"></button>
       </span> -->
-      <span class="ql-formats" hidden$="{{standardToolbar}}">
+      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
         <button class="ql-header" value="1" title="Header 1"></button>
         <button class="ql-header" value="2" title="Header 2"></button>
         <button class="ql-blockquote" title="Blockquote"></button>
@@ -77,17 +77,17 @@
       <span class="ql-formats">
         <button class="ql-list" value="ordered" title="Numbered List"></button>
         <button class="ql-list" value="bullet" title="Bullet List"></button>
-        <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{standardToolbar}}"></button>
-        <button class="ql-indent" value="+1" title="Indent" hidden$="{{standardToolbar}}"></button>
+        <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
+        <button class="ql-indent" value="+1" title="Indent" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
       </span>
-      <span class="ql-formats" hidden$="{{standardToolbar}}">
+      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
         <!-- <button class="ql-direction" value="rtl"></button> -->
         <select class="ql-align" title="Align">></select>
       </span>
       <span class="ql-formats">
         <button class="ql-link" title="Link"></button>
-        <button class="ql-image" title="Image" hidden$="{{standardToolbar}}"></button>
-        <button class="ql-video" title="Video" hidden$="{{standardToolbar}}"></button>
+        <button class="ql-image" title="Image" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
+        <button class="ql-video" title="Video" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
         <!-- <button class="ql-formula"></button>> -->
       </span>
       <span class="ql-formats">
@@ -251,20 +251,28 @@
         /**
          * Type of toolbar. Standard toolbar has basic functions.
          * When false, full toolbar is displayed.
-         * @property standardToolbar
+         * @property toolbarMode
          * @type Boolean
          * @default true
          */
-        standardToolbar: {
-          type: Boolean,
-          value: true,
-          title: 'Standard toolbar'
+        toolbarMode: {
+          type: String,
+          value: 'default',
+          title: 'Toolbar mode',
+          xtype: 'enum',
+          xvaluelist: [{
+            title: "Default",
+            value: "default"
+          }, {
+            title: "Full",
+            value: "full"
+          }]
         },
       },
 
       observers: [
         '_internalValidStateUpdate(required, maxChars)',
-        '_scheduleReload(formats, placeholder, theme, standardToolbar)'
+        '_scheduleReload(formats, placeholder, theme, toolbarMode)'
       ],
 
       $meta: [{
@@ -285,7 +293,7 @@
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _scheduleReload: function (formats, placeholder, theme, standardToolbar) {
+      _scheduleReload: function (formats, placeholder, theme, toolbarMode) {
         if (!this.parentElement) { return; }
         if (this._reloadTimeout === null) {
           var self = this;
@@ -553,6 +561,10 @@
         }
         var result = this.__lengthMeasuringInstance;
         return result;
+      },
+
+      _isDefaultToolbar: function (toolbarMode) {
+        return toolbarMode === "default";
       }
 
     });
