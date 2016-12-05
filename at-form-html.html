@@ -314,8 +314,19 @@
           Polymer.dom(child.parentElement).removeChild(child);
         }
 
+        /* remove theme related classes from editorContainer */
+        Polymer.dom(editorContainer).classList.remove('ql-snow');
+        Polymer.dom(editorContainer).classList.remove('ql-bubble');
+
+        /*
+          when changing theme this.$.toolbarContainer is deleted from the DOM
+          if we detect that its deleted we need to re-create it and add it to the DOM
+        */
+        var toolbarContainer = this.$.toolbarContainer;
+        Polymer.dom(toolbarContainer).classList.remove('ql-snow');
+        Polymer.dom(toolbarContainer).classList.remove('ql-bubble');
         var toolbarPrototype = this.$.toolbarPrototype;
-        Polymer.dom(this.$.toolbarContainer).innerHTML = Polymer.dom(toolbarPrototype).innerHTML;
+        Polymer.dom(toolbarContainer).innerHTML = Polymer.dom(toolbarPrototype).innerHTML;
 
         this.modules = {
           formula: false,
@@ -359,6 +370,23 @@
         // make sure init is not called again
         window.clearTimeout(this._reloadTimeout);
         this._reloadTimeout = null;
+
+        /*
+          when switching from bubble to snow theme
+          toolbarContainer is removed from the DOM but not deleted ; its just orphaned
+          we detect this and just reattach toolbarContainer to the right place
+        */
+        var parentElement = toolbarContainer.parentElement;
+        var hasParent = parentElement !== null;
+        while (hasParent && parentElement !== this) {
+          parentElement = parentElement.parentElement;
+          hasParent = parentElement !== null;
+        }
+
+        if (!hasParent && this.theme === "snow") {
+          Polymer.dom(this.$.contentContainer).insertBefore(toolbarContainer, this.$.editorContainer);
+        }
+        // toolbarContainer is now attached to the right place
 
         this._isReady = true;
         this._valueChanged(this.value, "called from ready");
