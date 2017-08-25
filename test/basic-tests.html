@@ -165,7 +165,7 @@
           var label = element.$.label;
           assert.notEqual(label, null, "element's label doesn't exist");
           var displayValue = label.getComputedStyleValue('display');
-          assert.equal(displayValue, 'block', "element's label is not visible");
+          assert.equal(displayValue, 'inline', "element's label is not visible");
           assert.equal(Polymer.dom(label).innerHTML, 'lorem ipsum', "element's label value not set correctly");
         });
 
@@ -385,7 +385,7 @@
           var label = element.$.label;
           assert.notEqual(label, null, "element's label doesn't exist");
           var displayValue = label.getComputedStyleValue('display');
-          assert.equal(displayValue, 'block', "element's label is not visible");
+          assert.equal(displayValue, 'inline', "element's label is not visible");
           assert.equal(Polymer.dom(label).innerHTML, 'lorem ipsum', "element's label value not set correctly");
         });
 
