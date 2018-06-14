@@ -526,6 +526,9 @@
         if opsMode is false, innerHTML of quill.root will be returned
       */
       _getQuillValue: function() {
+        // In FF, IE and Edge when this.quill is undefined return empty
+        if (this.quill === undefined) return "";
+        
         var result = "";
         var opsMode = this.opsMode;
         if (opsMode) {
