@@ -17,7 +17,7 @@
       }
 
       :host {
-        @apply(--at-form-host);
+        @apply --at-form-host;
       }
 
       #hint {
@@ -414,10 +414,21 @@
         this.toggleClass('hidden', newValue, atContainer);
       },
 
-      _internalValidStateUpdate: function (required, maxChars) {
-        if (this._isReady) {
-          this.validate();
+      _internalValidStateUpdate: function(required, maxChars) {
+        if (!this._isReady) return;
+
+        if (this._showErrorsWhenAttached) {
+          this._showErrorsWhenAttached = undefined;
+          this.validate(true);
+          return;
+
+        } else if (this._clearErrorsWhenAttached) {
+          this._clearErrorsWhenAttached = undefined;
+          this.validate(false);
+          return;
         }
+
+        this.validate();
       },
 
       _valueChanged: function(newValue, oldValue) {
@@ -447,24 +458,33 @@
         this.quill.focus();
       },
 
-      validate: function (showError) {
+      validate: function(showError) {
+        if ((!this.$ || !this.isConnected) && this.autoValidate == false && showError == true) {
+          // showError should be true when _internalValidStateUpdate is called from ready after element is attached
+          this._showErrorsWhenAttached = true;
+
+        } else if ((!this.$ || !this.isConnected) && this.autoValidate == true && showError == false) {
+          this._clearErrorsWhenAttached = true;
+        }
 
         if (showError === undefined) { showError = this.autoValidate; }
 
         // validate must validate the current value
-        var inputValue = this._getQuillValue();
-        var quillLength = this._getQuillValueLength(inputValue);
+        if (this.$ && this.isConnected) {
+          var inputValue = this._getQuillValue();
+          var quillLength = this._getQuillValueLength(inputValue);
 
-        if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1 ) {
-          // if value is set to null but quill input is not empty set value to input value
-          this._setOutputValue(inputValue);
-        } else if ([null, "null", ""].indexOf(this.value) === -1) {
-          // if value is not null
-          var valueQuillLength = this._getQuillValueLength(this.value);
-          var cmpValue = this.value.replace(/\\n/gm,"");
-          var cmpInputValue = inputValue.replace(/\\n/gm,"");
-          if (valueQuillLength !== -1 && (valueQuillLength !== quillLength || (valueQuillLength > 1 && cmpValue !== cmpInputValue))) {
+          if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1) {
+            // if value is set to null but quill input is not empty set value to input value
             this._setOutputValue(inputValue);
+          } else if ([null, "null", ""].indexOf(this.value) === -1) {
+            // if value is not null
+            var valueQuillLength = this._getQuillValueLength(this.value);
+            var cmpValue = this.value.replace(/\\n/gm, "");
+            var cmpInputValue = inputValue.replace(/\\n/gm, "");
+            if (valueQuillLength !== -1 && (valueQuillLength !== quillLength || (valueQuillLength > 1 && cmpValue !== cmpInputValue))) {
+              this._setOutputValue(inputValue);
+            }
           }
         }
 
@@ -485,15 +505,11 @@
       },
 
       _updateUIValidState: function(isValid) {
-        var label = this.$.label;
-        this.toggleClass('error', !isValid, label);
-        var contentContainer = this.$.contentContainer;
-        this.toggleClass('error', !isValid, contentContainer);
-        var atContainer = this.$.atContainer;
-        var codeMirrorCode = atContainer.getElementsByClassName('CodeMirror-lines')[0];
-        this.toggleClass('error', !isValid, codeMirrorCode);
-        var hint = this.$.hint;
-        this.toggleClass('error', !isValid, hint);
+        if (!this.$) return;
+
+        this.toggleClass('error', !isValid, this.$.label);
+        this.toggleClass('error', !isValid, this.$.contentContainer);
+        this.toggleClass('error', !isValid, this.$.hint);
       },
 
       //*******************************************************************************************************************
