@@ -39,7 +39,7 @@
       <select class="ql-size"></select>
       </span> -->
       <span class="ql-formats">
-        <select class="ql-header"  hidden$="{{_isDefaultToolbar(toolbarMode)}}">
+        <select class="ql-header" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
@@ -47,7 +47,7 @@
           <option value="5">Header 5</option>
           <option selected="selected">Normal</option>
         </select>
-        <select class="ql-header"  hidden$="{{!_isDefaultToolbar(toolbarMode)}}">
+        <select class="ql-header" hidden$="{{!_isDefaultToolbar(toolbarMode)}}">
           <option value="1">Header 1</option>
           <option value="2">Header 2</option>
           <option value="3">Header 3</option>
@@ -233,7 +233,7 @@
           type: String,
           value: 'snow',
           xtype: 'enum',
-          xvaluelist: [{title: 'Snow', value: 'snow'}, {title: 'Bubble', value: 'bubble'}],
+          xvaluelist: [{ title: 'Snow', value: 'snow' }, { title: 'Bubble', value: 'bubble' }],
         },
 
         /**
@@ -294,7 +294,7 @@
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _scheduleReload: function (formats, placeholder, theme, toolbarMode) {
+      _scheduleReload: function(formats, placeholder, theme, toolbarMode) {
         if (!this.parentElement) { return; }
         if (this._reloadTimeout === null) {
           var self = this;
@@ -304,7 +304,7 @@
         }
       },
 
-      _init: function () {
+      _init: function() {
 
         var self = this;
 
@@ -359,7 +359,7 @@
 
         this.quill = new Quill(editorContainer, configuration);
 
-        this.quill.on('text-change', function (event) {
+        this.quill.on('text-change', function(event) {
           if (self._ignoreQuillTextChanged) { return; }
           self.validate();
         });
@@ -393,7 +393,7 @@
         this._valueChanged(this.value, "called from ready");
       },
 
-      _opsModeChanged: function (newValue, oldValue) {
+      _opsModeChanged: function(newValue, oldValue) {
         if (!this._isReady) { return; }
         this._setOutputValue();
       },
@@ -443,7 +443,7 @@
         return this;
       },
 
-      focus: function () {
+      focus: function() {
         this.quill.focus();
       },
 
@@ -471,7 +471,7 @@
         return this._validate(showError);
       },
 
-      _validate: function (showError) {
+      _validate: function(showError) {
         var validationResult = this._validateBaseData();
         this._handleValidationResult(validationResult);
         if (!validationResult.isValid) {
@@ -506,7 +506,7 @@
         otherwise content of newValue will be set as output
         if newValue is empty html or empty quill delta object, output value will be set to empty string
       */
-      _setOutputValue: function (newValue) {
+      _setOutputValue: function(newValue) {
         var inputValue = newValue;
         if (!newValue) {
           inputValue = this._getQuillValue();
@@ -528,7 +528,7 @@
       _getQuillValue: function() {
         // In FF, IE and Edge when this.quill is undefined return empty
         if (this.quill === undefined) return "";
-        
+
         var result = "";
         var opsMode = this.opsMode;
         if (opsMode) {
@@ -595,7 +595,7 @@
         return result;
       },
 
-      _isDefaultToolbar: function (toolbarMode) {
+      _isDefaultToolbar: function(toolbarMode) {
         return toolbarMode === "default";
       }
 
