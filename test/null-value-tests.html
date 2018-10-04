@@ -64,16 +64,38 @@
 
   <script>
     suite('null value tests', function() {
+      
+      function isFirefoxShadowRoot(elt) {
+        var isChrome = elt.shadowRoot && elt.shadowRoot.Ga == undefined;
+        return !isChrome;
+      }
+      
+      var scopedNull = '<div class="style-scope at-form-html">null</div>';
+      var scopedDemoValue = '<div class="style-scope at-form-html">demo value</div>';
+      var scopedLoremIpsum = '<div class="style-scope at-form-html">lorem ipsum</div>';
 
       test('attribute value set to null', function(done) {
         var input = fixture('attrNullValue');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
+
         assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
+
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -91,13 +113,24 @@
 
       test('attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValue');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -115,14 +148,25 @@
 
       test('required and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndRequired');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.required, true, 'required is not set correctly');
         assert.equal(input.valid, true, 'element is not valid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedLoremIpsum, 'event detail value not set correctly');
+            assert.equal(input.value, scopedLoremIpsum, 'event detail value not set correctly');
+          }
           assert.equal(input.required, true, 'required is not set correctly');
           assert.equal(input.valid, true, 'element is not invalid');
           eventCount += 1;
@@ -141,14 +185,25 @@
 
       test('required and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndRequired');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.required, true, 'required is not set correctly');
         assert.equal(input.valid, true, 'value not set correctly');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.required, true, 'required is not set correctly');
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
@@ -167,14 +222,25 @@
 
       test('maxChars and attribute value set to null', function(done) {
         var input = fixture('attrNullValueAndMaxChars');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
         assert.equal(input.valid, false, 'element is not valid as value is too long');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
           assert.equal(input.valid, false, 'element is not invalid');
           eventCount += 1;
@@ -193,14 +259,25 @@
 
       test('maxChars and attribute value set to string null', function(done) {
         var input = fixture('attrNullStringValueAndMaxChars');
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
         assert.equal(input.valid, false, 'value is to long');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.maxChars, 2, 'maxChars is not set correctly');
           assert.equal(input.valid, false, 'value not set correctly');
           eventCount += 1;
@@ -230,8 +307,14 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -251,13 +334,24 @@
         var input = fixture('propertyTests');
         input.value = "null";
 
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.valid, true, 'element is not valid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, true, 'element is not valid');
           eventCount += 1;
         });
@@ -283,8 +377,14 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, true, 'value not set correctly');
           eventCount += 1;
         });
@@ -305,13 +405,24 @@
         input.required = true;
         input.value = "null";
 
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.valid, true, 'element is invalid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, true, 'element is not valid');
           eventCount += 1;
         });
@@ -337,8 +448,14 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, false, 'value not set correctly');
           eventCount += 1;
         });
@@ -359,13 +476,24 @@
         input.maxChars = 2;
         input.value = "null";
 
-        assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>null</div>", 'value not set correctly');
+
+        } else {
+          assert.equal(input.value, scopedNull, 'value not set correctly');
+        }
         assert.equal(input.valid, false, 'element is valid');
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>demo value</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>demo value</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedDemoValue, 'event detail value not set correctly');
+            assert.equal(input.value, scopedDemoValue, 'event detail value not set correctly');
+          }
           assert.equal(input.valid, false, 'element is valid');
           eventCount += 1;
         });
@@ -414,8 +542,14 @@
 
         var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
-          assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
-          assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+          if (!isFirefoxShadowRoot(input)) {
+            assert.equal(event.detail.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+            assert.equal(input.value, '<div>lorem ipsum</div>', 'event detail value not set correctly');
+
+          } else {
+            assert.equal(event.detail.value, scopedLoremIpsum, 'event detail value not set correctly');
+            assert.equal(input.value, scopedLoremIpsum, 'event detail value not set correctly');
+          }
 
           assert.equal(input.valid, true, 'element is invalid');
           eventCount += 1;

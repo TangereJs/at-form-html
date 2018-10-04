@@ -33,6 +33,12 @@
     */
     suite('validate like blur tests', function() {
 
+      function isFirefoxShadowRoot(elt) {
+        var isChrome = elt.shadowRoot && elt.shadowRoot.Ga == undefined;
+        return !isChrome;
+      }
+      var scopedLoremIpsum = '<div class="style-scope at-form-html">lorem ipsum</div>';
+
       // helper function that figures out whether we are in shadowDOM or shadyDOM
       function getDomMode(input) {
         if (!input.shadowRoot) {
@@ -65,12 +71,22 @@
 
         input.value = "lorem ipsum";
 
-        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+
+        } else {
+          assert.equal(input.value, scopedLoremIpsum, 'Input value is not correct');
+        }
         assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         input.validate();
+        
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
 
-        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        } else {
+          assert.equal(input.value, scopedLoremIpsum, 'Input value is not correct');
+        }
         assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         if (getDomMode(input) === 'shadowDOM') {
@@ -100,12 +116,22 @@
 
         inputElement.setText("lorem ipsum");
 
-        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+
+        } else {
+          assert.equal(input.value, scopedLoremIpsum, 'Input value is not correct');
+        }
         assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         input.validate();
 
-        assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+        if (!isFirefoxShadowRoot(input)) {
+          assert.equal(input.value, "<div>lorem ipsum</div>", 'Input value is not correct');
+
+        } else {
+          assert.equal(input.value, scopedLoremIpsum, 'Input value is not correct');
+        }
         assert.equal(inputElement.getText(), "lorem ipsum\n", 'Input element value is not correct');
 
         if (getDomMode(input) === 'shadowDOM') {

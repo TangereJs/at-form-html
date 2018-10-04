@@ -120,6 +120,13 @@
         assert.equal(hintContent, errorMessage);
       }
 
+      function isFirefoxShadowRoot(elt) {
+        var isChrome = elt.shadowRoot && elt.shadowRoot.Ga == undefined;
+        return !isChrome;
+      }
+      
+      var scopedLoremIpsum = '<div class="style-scope at-form-html">lorem ipsum</div>';
+
       suite('tests where properties are set as attributes', function () {
 
         test('value empty, required false, autovalidate false', function () {
@@ -135,7 +142,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -159,7 +171,13 @@
 
           // setting value to "lorem ipsum" should make element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -188,7 +206,13 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -212,7 +236,13 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -241,7 +271,13 @@
 
           // make element valid by setting value to "lorem ipsum"
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -273,7 +309,13 @@
 
           // setting value to "lorem ipsum" keeps the element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -294,7 +336,13 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -318,7 +366,13 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -346,7 +400,13 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -370,7 +430,13 @@
 
           // setting value to "lorem ipsum" should make element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -399,7 +465,13 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -423,7 +495,13 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -451,7 +529,13 @@
 
           // make element valid by setting value to "lorem ipsum"
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
+
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -483,7 +567,12 @@
 
           // setting value to "lorem ipsum" keeps the element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -504,7 +593,12 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -528,7 +622,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -571,7 +670,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -595,7 +699,12 @@
 
           // setting value to "lorem ipsum" should make element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -626,7 +735,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -650,7 +764,12 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -681,7 +800,12 @@
 
           // make element valid by setting value to "lorem ipsum"
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -713,7 +837,12 @@
 
           // setting value to "lorem ipsum" keeps the element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -736,7 +865,12 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -760,7 +894,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -791,7 +930,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -815,7 +959,12 @@
 
           // setting value to "lorem ipsum" should make element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -846,7 +995,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -870,7 +1024,12 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -901,7 +1060,12 @@
 
           // make element valid by setting value to "lorem ipsum"
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -933,7 +1097,12 @@
 
           // setting value to "lorem ipsum" keeps the element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -956,7 +1125,12 @@
 
           // setting value to "lorem ipsum" makes element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");
@@ -980,7 +1154,12 @@
 
           // setting value to "lorem ipsum" keeps element valid
           element.value = "lorem ipsum";
-          assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, "<div>lorem ipsum</div>", "value not set correctly");
+
+          } else {
+            assert.equal(element.value, scopedLoremIpsum, "value not set correctly");
+          }
 
           // assert that element is valid
           assertErrorMessage(element, "");

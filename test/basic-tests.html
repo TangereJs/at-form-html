@@ -157,6 +157,11 @@
   <script>
     suite('basic tests', function() {
 
+      function isFirefoxShadowRoot(elt) {
+        var isChrome = elt.shadowRoot && elt.shadowRoot.Ga == undefined;
+        return !isChrome;
+      }
+
       suite('property values are set as attributes', function() {
 
         test('is label displayed', function() {
@@ -339,7 +344,12 @@
         test('max chars 0, value lorem ipsum', function () {
           var element = fixture('maxChars0ValueLoremIpsum');
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          
+          } else {
+            assert.equal(element.value, '<div class="style-scope at-form-html">lorem ipsum</div>', "value not set correctly");
+          }
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -348,7 +358,12 @@
         test('max chars 10, value lorem ipsum', function () {
           var element = fixture('maxChars10ValueLoremIpsum');
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          
+          } else {
+            assert.equal(element.value, '<div class="style-scope at-form-html">lorem ipsum</div>', "value not set correctly");
+          }
 
           var result = element.validate();
           assert.equal(result, false, "element is valid");
@@ -562,7 +577,12 @@
           element.maxChars = 0;
           element.value = 'lorem ipsum';
           assert.equal(element.maxChars, 0, "maxChars not set correctly");
-          assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+
+          } else {
+            assert.equal(element.value, '<div class="style-scope at-form-html">lorem ipsum</div>', "value not set correctly");
+          }
 
           var result = element.validate();
           assert.equal(result, true, "element is invalid");
@@ -573,7 +593,12 @@
           element.maxChars = 10;
           element.value = 'lorem ipsum';
           assert.equal(element.maxChars, 10, "maxChars not set correctly");
-          assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+          if (!isFirefoxShadowRoot(element)) {
+            assert.equal(element.value, '<div>lorem ipsum</div>', "value not set correctly");
+
+          } else {
+            assert.equal(element.value, '<div class="style-scope at-form-html">lorem ipsum</div>', "value not set correctly");
+          }
 
           var result = element.validate();
           assert.equal(result, false, "element is valid");
