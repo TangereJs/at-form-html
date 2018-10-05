@@ -24,6 +24,10 @@
         min-height: 14px;
         margin-bottom: 8px;
       }
+
+      :host [hidden] {
+        display: none !important;
+      }
     </style>
     <!--
       Why is this here?
@@ -388,6 +392,10 @@
           Polymer.dom(this.$.contentContainer).insertBefore(toolbarContainer, this.$.editorContainer);
         }
         // toolbarContainer is now attached to the right place
+
+        if (this.scopeSubtree != undefined) {
+          this.scopeSubtree(this.$.contentContainer);
+        }
 
         this._isReady = true;
         this._valueChanged(this.value, "called from ready");
