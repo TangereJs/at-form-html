@@ -187,8 +187,6 @@
         var required_ = Boolean(required);
 
         // if required is true and value is null => valid = false
-        // if required is true and value is not a quill object in JSON form => valid = true
-        // if required is true and value is a quill object in JSON form => valid = true
         var isNull = [null, "null", ""].indexOf(value) !== -1;
         validationResult.isValid = !required_ || !isNull;
         if (!validationResult.isValid) {
@@ -207,7 +205,7 @@
         try {
           var maxChars = parseInt(maxChars);
           if (maxChars > 0) {
-            var charCount = getQuillDeltaLength(value);
+            var charCount = value.length;
             validationResult.isValid = (maxChars + 1) > charCount;
             if (!validationResult.isValid) {
               validationResult.errorMessage = localizer("You can not enter more than {0} characters.", maxChars);
@@ -218,24 +216,6 @@
         }
 
         return validationResult;
-      }
-
-      function getQuillDeltaLength(quillDeltaAsJson) {
-        try {
-          var quillDeltaObj = JSON.parse(quillDeltaAsJson);
-          var ops = quillDeltaObj.ops;
-          if (!ops || !isArray(ops) || !ops.length) { return 1; }
-
-          var totalLength = 0;
-          ops.forEach(function(op, index) {
-            totalLength += (op.insert.trim()).length;
-          });
-
-          return totalLength;
-        } catch (e) {
-          // value is html; return string length          
-          return quillDeltaAsJson.length;
-        }
       }
 
     }

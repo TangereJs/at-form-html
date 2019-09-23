@@ -4,13 +4,12 @@
 <link rel="import" href="../at-theme/at-theme.html">
 <link rel="import" href="../iron-label/iron-label.html">
 <link rel="import" href="at-form-html-input-validation.html">
-<link rel="import" href="quill-import.html">
+
+<link rel="import" href="../at-core-wysiwyg/at-core-wysiwyg.html">
 
 <dom-module id="at-form-html">
   <template>
     <style include="at-form-common"></style>
-    <style include="quill-bubble"></style>
-    <style include="quill-snow"></style>
     <style>
       :host * {
         box-sizing: border-box;
@@ -29,84 +28,13 @@
         display: none !important;
       }
     </style>
-    <!--
-      Why is this here?
-      Inside at-form-html quill instace is initialized multiple times
-      toolbar breaks if multiple quill instances are created over same toolbar HTML
-      That is why we have hidden toolbarPrototype
-      When needed, toolbarPrototype.innerHTML is given to toolbarContainer.innerHTML
-      and quill instance is created over toolbarContainer
-    -->
-    <div id="toolbarPrototype" style="display: none">
-      <!-- <span class="ql-formats">
-      <select class="ql-font"></select>
-      <select class="ql-size"></select>
-      </span> -->
-      <span class="ql-formats">
-        <select class="ql-header" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
-          <option value="1">Header 1</option>
-          <option value="2">Header 2</option>
-          <option value="3">Header 3</option>
-          <option value="4">Header 4</option>
-          <option value="5">Header 5</option>
-          <option selected="selected">Normal</option>
-        </select>
-        <select class="ql-header" hidden$="{{!_isDefaultToolbar(toolbarMode)}}">
-          <option value="1">Header 1</option>
-          <option value="2">Header 2</option>
-          <option value="3">Header 3</option>
-          <option selected="selected">Normal</option>
-        </select>
-      </span>
-      <span class="ql-formats">
-        <button class="ql-bold" title="Bold"></button>
-        <button class="ql-italic" title="Italic"></button>
-        <button class="ql-underline" title="Underline"></button>
-        <button class="ql-strike" title="strike" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
-      </span>
-      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
-        <select class="ql-color" title="Text Color"></select>
-        <select class="ql-background" title="Text Background Color"></select>
-      </span>
-      <!-- <span class="ql-formats">
-      <button class="ql-script" value="sub"></button>
-      <button class="ql-script" value="super"></button>
-      </span> -->
-      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
-        <button class="ql-header" value="1" title="Header 1"></button>
-        <button class="ql-header" value="2" title="Header 2"></button>
-        <button class="ql-blockquote" title="Blockquote"></button>
-        <!-- <button class="ql-code-block" title="Code Clock"></button> -->
-      </span>
-      <span class="ql-formats">
-        <button class="ql-list" value="ordered" title="Numbered List"></button>
-        <button class="ql-list" value="bullet" title="Bullet List"></button>
-        <button class="ql-indent" value="-1" title="Decrease Indent" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
-        <button class="ql-indent" value="+1" title="Indent" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
-      </span>
-      <span class="ql-formats" hidden$="{{_isDefaultToolbar(toolbarMode)}}">
-        <!-- <button class="ql-direction" value="rtl"></button> -->
-        <select class="ql-align" title="Align">></select>
-      </span>
-      <span class="ql-formats">
-        <button class="ql-link" title="Link"></button>
-        <button class="ql-image" title="Image" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
-        <button class="ql-video" title="Video" hidden$="{{_isDefaultToolbar(toolbarMode)}}"></button>
-        <!-- <button class="ql-formula"></button>> -->
-      </span>
-      <span class="ql-formats">
-        <button class="ql-clean" title="Clear Formating"></button>
-      </span>
-    </div>
-
+    
     <div id="atContainer" class="at-container">
       <iron-label id="label" on-tap="focus">{{label}}</iron-label>
-      <div id="contentContainer" class="at-content-container">
-        <div id="toolbarContainer"></div>
-        <div id="editorContainer"></div>
-      </div>
+      <at-core-wysiwyg id="wysiwyg" toolbar="[[toolbarMode]]" disabled="[[disabled]]" on-body-text-changed="_handleBodyTextChanged"></at-core-wysiwyg>
       <div id="hint"></div>
     </div>
+
   </template>
   <script>
     'use strict';
@@ -206,53 +134,6 @@
         },
 
         /**
-         * Placeholder when there is no content
-         * @property placeholder
-         * @type String
-         * @default null
-         */
-        placeholder: {
-          type: String,
-          value: null,
-        },
-
-        /**
-         * Whitelist for all formats to allow. Defaults to enable all formats
-         * @property formats
-         * @type Array
-         * @default null
-         */
-        formats: {
-          type: Array,
-          value: function() { return []; },
-        },
-
-        /**
-         * The Quill theme. Choose either "snow" or "bubble".
-         * @property theme
-         * @type String
-         * @default snow
-         */
-        theme: {
-          type: String,
-          value: 'snow',
-          xtype: 'enum',
-          xvaluelist: [{ title: 'Snow', value: 'snow' }, { title: 'Bubble', value: 'bubble' }],
-        },
-
-        /**
-         * Ops Mode if true value will be emitted as quill delta. If false value will be emitted as html
-         * @property opsMode
-         * @type Boolean
-         * @default false
-         */
-        opsMode: {
-          type: Boolean,
-          value: false,
-          observer: '_opsModeChanged'
-        },
-
-        /**
          * Type of toolbar. Standard toolbar has basic functions.
          * When false, full toolbar is displayed.
          * @property toolbarMode
@@ -275,8 +156,7 @@
       },
 
       observers: [
-        '_internalValidStateUpdate(required, maxChars)',
-        '_scheduleReload(formats, placeholder, theme, toolbarMode)'
+        '_internalValidStateUpdate(required, maxChars)'
       ],
 
       $meta: [{
@@ -291,119 +171,12 @@
       },
 
       attached: function() {
-        this._reloadTimeout = null;
-        this._init();
-
-        this._opsModeChanged(this.opsMode, "called from ready");
+        this._isReady = true;
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _scheduleReload: function(formats, placeholder, theme, toolbarMode) {
-        if (!this.parentElement) { return; }
-        if (this._reloadTimeout === null) {
-          var self = this;
-          this._reloadTimeout = window.setTimeout(function() {
-            self._init();
-          }, 0);
-        }
-      },
-
-      _init: function() {
-
-        var self = this;
-
-        var editorContainer = this.$.editorContainer;
-        var children = editorContainer.children;
-        for (var i = children.length - 1; i >= 0; i--) {
-          var child = children[i];
-          Polymer.dom(child.parentElement).removeChild(child);
-        }
-
-        /* remove theme related classes from editorContainer */
-        Polymer.dom(editorContainer).classList.remove('ql-snow');
-        Polymer.dom(editorContainer).classList.remove('ql-bubble');
-
-        /*
-          when changing theme this.$.toolbarContainer is deleted from the DOM
-          if we detect that its deleted we need to re-create it and add it to the DOM
-        */
-        var toolbarContainer = this.$.toolbarContainer;
-        Polymer.dom(toolbarContainer).classList.remove('ql-snow');
-        Polymer.dom(toolbarContainer).classList.remove('ql-bubble');
-        var toolbarPrototype = this.$.toolbarPrototype;
-        Polymer.dom(toolbarContainer).innerHTML = Polymer.dom(toolbarPrototype).innerHTML;
-
-        this.modules = {
-          formula: false,
-          syntax: false,
-          toolbar: this.$.toolbarContainer
-        };
-
-        var configuration = {
-          bounds: this,
-          modules: this.modules,
-          theme: this.theme,
-          readOnly: this.readOnly,
-          placeholder: this.placeholder
-        };
-        if (this.formats.length) {
-          // convert array of objects to array of strings
-          var arrayOfStrings = [];
-          for (var i = 0; i < this.formats.length; i++) {
-            var formatObj = this.formats[i];
-            arrayOfStrings.push(formatObj.value);
-          }
-          configuration.formats = arrayOfStrings;
-        }
-
-        var Parchment = Quill.import('parchment');
-        var Block = Parchment.query('block');
-        Block.tagName = 'DIV';
-        Quill.register(Block, true);
-
-        this.quill = new Quill(editorContainer, configuration);
-
-        this.quill.on('text-change', function(event) {
-          if (self._ignoreQuillTextChanged) { return; }
-          self.validate();
-        });
-
-        if (this.disabled) {
-          this.quill.disable();
-        }
-
-        // make sure init is not called again
-        window.clearTimeout(this._reloadTimeout);
-        this._reloadTimeout = null;
-
-        /*
-          when switching from bubble to snow theme
-          toolbarContainer is removed from the DOM but not deleted ; its just orphaned
-          we detect this and just reattach toolbarContainer to the right place
-        */
-        var parentElement = toolbarContainer.parentElement;
-        var hasParent = parentElement !== null;
-        while (hasParent && parentElement !== this) {
-          parentElement = parentElement.parentElement;
-          hasParent = parentElement !== null;
-        }
-
-        if (!hasParent && this.theme === "snow") {
-          Polymer.dom(this.$.contentContainer).insertBefore(toolbarContainer, this.$.editorContainer);
-        }
-        // toolbarContainer is now attached to the right place
-
-        if (this.scopeSubtree != undefined) {
-          this.scopeSubtree(this.$.contentContainer);
-        }
-
-        this._isReady = true;
-        this._valueChanged(this.value, "called from ready");
-      },
-
-      _opsModeChanged: function(newValue, oldValue) {
-        if (!this._isReady) { return; }
-        this._setOutputValue();
+      _handleBodyTextChanged: function(event) {
+        this.validate();
       },
 
       _disabledChanged: function(newValue, oldValue) {
@@ -411,10 +184,6 @@
         this.toggleClass('disabled', newValue, label);
         var contentContainer = this.$.contentContainer;
         this.toggleClass('disabled', newValue, contentContainer);
-
-        if (this._isReady) {
-          this.quill.enable(!newValue);
-        }
       },
 
       _hideChanged: function(newValue, oldValue) {
@@ -444,12 +213,10 @@
 
         var valueToSet = newValue === null ? "" : newValue;
 
-        this._ignoreQuillTextChanged = true;
-        this._setQuillValue(valueToSet);
+        this._setWysiwygValue(valueToSet);
         this._isInternalUpdate = true;
-        this.value = newValue !== null && newValue !== "" ? this._getQuillValue() : newValue;
+        this.value = newValue !== null && newValue !== "" ? this.$.wysiwyg.get() : newValue;
         this._isInternalUpdate = false;
-        this._ignoreQuillTextChanged = false;
 
         if (this.value === oldValue) { return; }
 
@@ -463,7 +230,7 @@
       },
 
       focus: function() {
-        this.quill.focus();
+        this.$.wysiwyg.focusEditor();
       },
 
       validate: function(showError) {
@@ -479,21 +246,8 @@
 
         // validate must validate the current value
         if (this.$ && this.isConnected) {
-          var inputValue = this._getQuillValue();
-          var quillLength = this._getQuillValueLength(inputValue);
-
-          if ([null, "null", ""].indexOf(this.value) !== -1 && quillLength > 1) {
-            // if value is set to null but quill input is not empty set value to input value
-            this._setOutputValue(inputValue);
-          } else if ([null, "null", ""].indexOf(this.value) === -1) {
-            // if value is not null
-            var valueQuillLength = this._getQuillValueLength(this.value);
-            var cmpValue = this.value.replace(/\\n/gm, "");
-            var cmpInputValue = inputValue.replace(/\\n/gm, "");
-            if (valueQuillLength !== -1 && (valueQuillLength !== quillLength || (valueQuillLength > 1 && cmpValue !== cmpInputValue))) {
-              this._setOutputValue(inputValue);
-            }
-          }
+          var inputValue = this.$.wysiwyg.get();
+          this._setOutputValue(inputValue);
         }
 
         return this._validate(showError);
@@ -516,107 +270,28 @@
         if (!this.$) return;
 
         this.toggleClass('error', !isValid, this.$.label);
-        this.toggleClass('error', !isValid, this.$.contentContainer);
         this.toggleClass('error', !isValid, this.$.hint);
+        this.toggleClass('error', !isValid, this.$.wysiwyg);
       },
 
       //*******************************************************************************************************************
       // Helper functions
       //*******************************************************************************************************************
-      /*
-        Sets the .value property for at-form-html (which is the output value)
-        newValue input parameter is either undefined, quill delta (as json string or object) or html string
-        if newValue is undefined current content of this.quill.getContents() will be set as output
-        otherwise content of newValue will be set as output
-        if newValue is empty html or empty quill delta object, output value will be set to empty string
-      */
+     
       _setOutputValue: function(newValue) {
         var inputValue = newValue;
         if (!newValue) {
-          inputValue = this._getQuillValue();
+          inputValue = this.$.wysiwyg.get();
         }
 
         this._isInternalUpdate = true;
-        var valueLength = this._getQuillValueLength(inputValue);
-        inputValue = valueLength === 1 ? "" : inputValue;
         this.value = inputValue;
         this._fireValueChangedEvent(inputValue);
         this._isInternalUpdate = false;
       },
 
-      /*
-        Returns current quill value, respecting opsMode property
-        if opsMode is true, quill delta object will be returned as json string
-        if opsMode is false, innerHTML of quill.root will be returned
-      */
-      _getQuillValue: function() {
-        // In FF, IE and Edge when this.quill is undefined return empty
-        if (this.quill === undefined) return "";
-
-        var result = "";
-        var opsMode = this.opsMode;
-        if (opsMode) {
-          // return value as quill delta object as json
-          result = JSON.stringify(this.quill.getContents());
-        } else {
-          // return value as html
-          result = Polymer.dom(this.quill.root).innerHTML;
-        }
-        return result;
-      },
-
-      /*
-        Sets quill value, respecting opsMode property
-        if opsMode is true quill value is set using quill.setContents function
-        if opsMode is false quill value is set using quill.clipboard.dangerouslyPasteHTML function
-      */
-      _setQuillValue: function(newValue) {
-        var opsMode = this.opsMode;
-        if (opsMode) {
-          try {
-            var parsedObject = JSON.parse(newValue);
-            this.quill.setContents(parsedObject);
-          } catch (e) {
-            console.log(e);
-            this.quill.setContents(newValue);
-          }
-        } else {
-          this.quill.clipboard.dangerouslyPasteHTML(newValue);
-        }
-      },
-
-      /*
-        Calculates and retunrs length of passed quillStringValue
-        if quillStringValue is quill delta json string its set on a quill instance and result of quill.getLength() function is returned
-        if quillStringValue is html string its set on a quill instance and result of quill.getLength() function is returned
-      */
-      _getQuillValueLength: function(quillStringValue) {
-        var measuringInstance = this._getLentghMeasuringInstance();
-
-        if (this.opsMode) {
-          try {
-            var parsedObject = JSON.parse(quillStringValue);
-            measuringInstance.setContents(parsedObject);
-          } catch (e) {
-            measuringInstance.setContents(quillStringValue);
-          }
-        } else {
-          measuringInstance.clipboard.dangerouslyPasteHTML(quillStringValue);
-        }
-
-        return measuringInstance.getLength();
-      },
-
-      /*
-        Getter for a special private variable of type Quill used for measuring length of string values named __lengthMeasuringInstance
-      */
-      _getLentghMeasuringInstance: function() {
-        if (!this.__lengthMeasuringInstance) {
-          var container = document.createElement('div');
-          this.__lengthMeasuringInstance = new Quill(container, {});
-        }
-        var result = this.__lengthMeasuringInstance;
-        return result;
+      _setWysiwygValue: function(newValue) {
+        this.$.wysiwyg.setInnerHtmlValue(newValue);
       },
 
       _isDefaultToolbar: function(toolbarMode) {
