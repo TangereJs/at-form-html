@@ -31,7 +31,7 @@
     
     <div id="atContainer" class="at-container">
       <iron-label id="label" on-tap="focus">{{label}}</iron-label>
-      <at-core-wysiwyg id="wysiwyg" toolbar-mode="[[toolbarMode]]" disabled="[[disabled]]" on-body-text-changed="_handleBodyTextChanged" allow-html-source-edit="[[allowHtmlSourceEdit]]"></at-core-wysiwyg>
+      <at-core-wysiwyg id="wysiwyg" toolbar-mode="[[toolbarMode]]" disabled="[[disabled]]" on-value-changed="_handleWysiwygValueChanged" allow-html-source-edit="[[allowHtmlSourceEdit]]"></at-core-wysiwyg>
       <div id="hint"></div>
     </div>
 
@@ -180,7 +180,7 @@
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
-      _handleBodyTextChanged: function(event) {
+      _handleWysiwygValueChanged: function(event) {
         this.validate();
       },
 
@@ -218,7 +218,7 @@
 
         var valueToSet = newValue === null ? "" : newValue;
 
-        this._setWysiwygValue(valueToSet);
+        this.$.wysiwyg.value = valueToSet;
         this._isInternalUpdate = true;
         this.value = newValue !== null && newValue !== "" ? this.$.wysiwyg.get() : newValue;
         this._isInternalUpdate = false;
@@ -293,10 +293,6 @@
         this.value = inputValue;
         this._fireValueChangedEvent(inputValue);
         this._isInternalUpdate = false;
-      },
-
-      _setWysiwygValue: function(newValue) {
-        this.$.wysiwyg.setInnerHtmlValue(newValue);
       },
 
       _isDefaultToolbar: function(toolbarMode) {
