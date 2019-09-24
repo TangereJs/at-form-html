@@ -31,7 +31,7 @@
     
     <div id="atContainer" class="at-container">
       <iron-label id="label" on-tap="focus">{{label}}</iron-label>
-      <at-core-wysiwyg id="wysiwyg" toolbar="[[toolbarMode]]" disabled="[[disabled]]" on-body-text-changed="_handleBodyTextChanged"></at-core-wysiwyg>
+      <at-core-wysiwyg id="wysiwyg" toolbar-mode="[[toolbarMode]]" disabled="[[disabled]]" on-body-text-changed="_handleBodyTextChanged" allow-html-source-edit="[[allowHtmlSourceEdit]]"></at-core-wysiwyg>
       <div id="hint"></div>
     </div>
 
@@ -134,8 +134,8 @@
         },
 
         /**
-         * Type of toolbar. Standard toolbar has basic functions.
-         * When false, full toolbar is displayed.
+         * Type of toolbar. Default toolbar shows only Bold, Italic, Underline, Justify Full, Unordered/Ordered list and Clear formatting icons.
+         * Full toolbar shows all icons.
          * @property toolbarMode
          * @type Boolean
          * @default true
@@ -153,6 +153,11 @@
             value: "full"
           }]
         },
+
+        allowHtmlSourceEdit: {
+          type: Boolean,
+          value: false
+        }
       },
 
       observers: [
