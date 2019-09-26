@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>at-form-html demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-form-html.html">
+  <link rel="import" href="../../at-form-text/at-form-text.html">
+
+  <style></style>
+</head>
+
+<body>
+  <at-form-html id="html" value="<b>Hello, world</b>" required auto-validate max-chars="5"></at-form-html>
+  <at-form-text id="text" value="<b>Hello, world</b>" required auto-validate max-chars="5"></at-form-text>
+
+  <script>
+    var html = document.getElementById("html");
+    html.addEventListener("value-changed", function(e) {
+      console.log("new html value: " + e.detail.value);
+    });
+
+    var text = document.getElementById("text");
+    text.addEventListener("value-changed", function(e) {
+      console.log("new text value: " + e.detail.value);
+    });
+  </script>
+</body></html>
