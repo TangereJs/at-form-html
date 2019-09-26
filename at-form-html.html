@@ -31,7 +31,7 @@
     
     <div id="atContainer" class="at-container">
       <iron-label id="label" on-tap="focus">{{label}}</iron-label>
-      <at-core-wysiwyg id="wysiwyg" toolbar-mode="[[toolbarMode]]" disabled="[[disabled]]" on-value-changed="_handleWysiwygValueChanged" allow-html-source-edit="[[allowHtmlSourceEdit]]"></at-core-wysiwyg>
+      <at-core-wysiwyg id="wysiwyg" toolbar-mode="[[toolbarMode]]" disabled="[[disabled]]" on-value-changed="_handleWysiwygValueChanged"></at-core-wysiwyg>
       <div id="hint"></div>
     </div>
 
@@ -156,7 +156,8 @@
 
         allowHtmlSourceEdit: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_allowHtmlSourceEditChanged'
         }
       },
 
@@ -177,12 +178,15 @@
 
       attached: function() {
         this.$.wysiwyg.value = this.value;
+        this.$.wysiwyg.allowHtmlSourceEdit = this.allowHtmlSourceEdit;
         this._isReady = true;
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
       _handleWysiwygValueChanged: function(event) {
         if (!this._isReady || this._isInternalUpdate) { return; }
+
+        if(this.value == event.detail.value) return;
         
         this.validate();
       },
@@ -220,7 +224,6 @@
         if (!this._isReady || this._isInternalUpdate) { return; }
 
         var valueToSet = newValue === null ? "" : newValue;
-
         this.$.wysiwyg.value = valueToSet;
         this._isInternalUpdate = true;
         this.value = newValue !== null && newValue !== "" ? this.$.wysiwyg.get() : newValue;
@@ -231,6 +234,12 @@
         if (this.autoValidate) { this._validate(true); }
 
         this._fireValueChangedEvent(this.value);
+      },
+
+      _allowHtmlSourceEditChanged: function(newValue, oldValue) {
+        if(oldValue == undefined) return;
+
+        this.$.wysiwyg.allowHtmlSourceEdit = newValue;
       },
 
       _getFocusableElement: function() {
@@ -287,6 +296,8 @@
       //*******************************************************************************************************************
      
       _setOutputValue: function(newValue) {
+        if(this.value == newValue) return;
+
         var inputValue = newValue;
         if (!newValue) {
           inputValue = this.$.wysiwyg.get();
