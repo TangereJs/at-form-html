@@ -176,11 +176,14 @@
       },
 
       attached: function() {
+        this.$.wysiwyg.value = this.value;
         this._isReady = true;
         this._internalValidStateUpdate(this.required, this.maxChars);
       },
 
       _handleWysiwygValueChanged: function(event) {
+        if (!this._isReady || this._isInternalUpdate) { return; }
+        
         this.validate();
       },
 
