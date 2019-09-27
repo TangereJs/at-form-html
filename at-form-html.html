@@ -187,7 +187,8 @@
         if (!this._isReady || this._isInternalUpdate) { return; }
 
         if(this.value == event.detail.value) return;
-        
+
+        this._setOutputValue(event.detail.value);
         this.validate();
       },
 
@@ -261,12 +262,6 @@
 
         if (showError === undefined) { showError = this.autoValidate; }
 
-        // validate must validate the current value
-        if (this.$ && this.isConnected) {
-          var inputValue = this.$.wysiwyg.get();
-          this._setOutputValue(inputValue);
-        }
-
         return this._validate(showError);
       },
 
@@ -298,14 +293,9 @@
       _setOutputValue: function(newValue) {
         if(this.value == newValue) return;
 
-        var inputValue = newValue;
-        if (!newValue) {
-          inputValue = this.$.wysiwyg.get();
-        }
-
         this._isInternalUpdate = true;
-        this.value = inputValue;
-        this._fireValueChangedEvent(inputValue);
+        this.value = newValue;
+        this._fireValueChangedEvent(newValue);
         this._isInternalUpdate = false;
       },
 
