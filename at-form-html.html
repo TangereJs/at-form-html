@@ -227,7 +227,7 @@
         var valueToSet = newValue === null ? "" : newValue;
         this.$.wysiwyg.value = valueToSet;
         this._isInternalUpdate = true;
-        this.value = newValue !== null && newValue !== "" ? this.$.wysiwyg.get() : newValue;
+        this.value = newValue !== null && newValue !== "" ? this.$.wysiwyg.value : newValue;
         this._isInternalUpdate = false;
 
         if (this.value === oldValue) { return; }
